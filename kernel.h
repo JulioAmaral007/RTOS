@@ -18,6 +18,7 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 

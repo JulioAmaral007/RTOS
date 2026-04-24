@@ -4,9 +4,11 @@
 
 #include "kernel.h"
 #include "user.h"
+#include "mem.h"
 
 int main()
 {
+    SRAMInitHeap();
     os_config();
     
     //os_create_task(2, acionaMotor, 5);

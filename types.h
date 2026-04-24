@@ -58,7 +58,7 @@ typedef struct tcb {
 
 // Fila de aptos
 typedef struct ready_queue {
-    tcb_t TASKS[MAX_USER_TASKS+1];
+    tcb_t *TASKS[MAX_USER_TASKS+1];  // ponteiros; TCBs alocados dinamicamente
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;

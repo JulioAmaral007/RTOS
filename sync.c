@@ -37,7 +37,7 @@ void sem_post(sem_t *sem)
     sem->contador++;
     if (sem->contador <= 0) {
         // Libera o processo bloqueado a mais tempo
-        r_queue.TASKS[sem->fila[sem->pos_output]].task_state = READY;
+        r_queue.TASKS[sem->fila[sem->pos_output]]->task_state = READY;
         sem->pos_output = (sem->pos_output + 1) % MAX_USER_TASKS;
     }
 
@@ -93,7 +93,7 @@ void mutex_unlock(mutex_t *m)
         // Transferir ownership para a task bloqueada ha mais tempo
         m->owner_pos  = m->fila[m->pos_output];
         m->pos_output = (m->pos_output + 1) % MAX_USER_TASKS;
-        r_queue.TASKS[m->owner_pos].task_state = READY;
+        r_queue.TASKS[m->owner_pos]->task_state = READY;
         // mutex permanece LOCKED com o novo dono
     } else {
         // Sem tasks esperando: liberar o mutex
