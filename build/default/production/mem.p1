@@ -1,0 +1,349 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"122 ./mem.h
+[; ;./mem.h: 122:  {
+[s S2 :7 `uc 1 :1 `uc 1 ]
+[n S2 _BITS count alloc ]
+"119
+[; ;./mem.h: 119: {
+[u S1 `uc 1 `S2 1 ]
+[n S1 _SALLOC byte bits ]
+"149
+[v __SRAMmerge `(uc ~T0 @X0 0 ef1`*S1 ]
+"136 ./mem.h
+[v __uDynamicHeap `uc ~T0 @X0 -> 512 `i e ]
+"29 mem.c
+[; ;mem.c: 29: unsigned char * SRAMalloc( unsigned char nBytes)
+[v _SRAMalloc `(*uc ~T0 @X0 1 ef1`uc ]
+"30
+[; ;mem.c: 30: {
+{
+[e :U _SRAMalloc ]
+"29
+[; ;mem.c: 29: unsigned char * SRAMalloc( unsigned char nBytes)
+[v _nBytes `uc ~T0 @X0 1 r1 ]
+"30
+[; ;mem.c: 30: {
+[f ]
+"31
+[; ;mem.c: 31:  SALLOC * pHeap;
+[v _pHeap `*S1 ~T0 @X0 1 a ]
+"32
+[; ;mem.c: 32:  SALLOC * temp;
+[v _temp `*S1 ~T0 @X0 1 a ]
+"33
+[; ;mem.c: 33:       SALLOC segHeader;
+[v _segHeader `S1 ~T0 @X0 1 a ]
+"34
+[; ;mem.c: 34:       unsigned char segLen;
+[v _segLen `uc ~T0 @X0 1 a ]
+"37
+[; ;mem.c: 37:  if (nBytes > (0x7F - 1)) return (0);
+[e $ ! > -> _nBytes `i - -> 127 `i -> 1 `i 4  ]
+[e ) -> -> 0 `i `*uc ]
+[e $UE 3  ]
+[e :U 4 ]
+"40
+[; ;mem.c: 40:  pHeap = (SALLOC *)_uDynamicHeap;
+[e = _pHeap -> &U __uDynamicHeap `*S1 ]
+"42
+[; ;mem.c: 42:  while (1)
+[e :U 6 ]
+"43
+[; ;mem.c: 43:  {
+{
+"45
+[; ;mem.c: 45:   segHeader = *pHeap;
+[e = _segHeader *U _pHeap ]
+"48
+[; ;mem.c: 48:   segLen = segHeader.bits.count - 1;
+[e = _segLen -> - -> . . _segHeader 1 0 `i -> 1 `i `uc ]
+"51
+[; ;mem.c: 51:   if (segHeader.byte == 0) return (0);
+[e $ ! == -> . _segHeader 0 `i -> 0 `i 8  ]
+[e ) -> -> 0 `i `*uc ]
+[e $UE 3  ]
+[e :U 8 ]
+"54
+[; ;mem.c: 54:   if (!(segHeader.bits.alloc))
+[e $ ! ! != -> . . _segHeader 1 1 `i -> 0 `i 9  ]
+"55
+[; ;mem.c: 55:   {
+{
+"57
+[; ;mem.c: 57:    if (nBytes > segLen)
+[e $ ! > -> _nBytes `i -> _segLen `i 10  ]
+"58
+[; ;mem.c: 58:    {
+{
+"60
+[; ;mem.c: 60:     if (!(_SRAMmerge(pHeap))) pHeap += segHeader.bits.count;
+[e $ ! ! != -> ( __SRAMmerge (1 _pHeap `i -> 0 `i 11  ]
+[e =+ _pHeap * -> -> . . _segHeader 1 0 `i `x -> -> # *U _pHeap `i `x ]
+[e :U 11 ]
+"61
+[; ;mem.c: 61:    }
+}
+[e $U 12  ]
+"62
+[; ;mem.c: 62:    else
+[e :U 10 ]
+"66
+[; ;mem.c: 66:    if (nBytes == segLen)
+[e $ ! == -> _nBytes `i -> _segLen `i 13  ]
+"67
+[; ;mem.c: 67:    {
+{
+"69
+[; ;mem.c: 69:     (*pHeap).bits.alloc = 1;
+[e = . . *U _pHeap 1 1 -> -> 1 `i `uc ]
+"72
+[; ;mem.c: 72:     return ((unsigned char *)(pHeap + 1));
+[e ) -> + _pHeap * -> -> 1 `i `x -> -> # *U _pHeap `i `x `*uc ]
+[e $UE 3  ]
+"73
+[; ;mem.c: 73:    }
+}
+[e $U 14  ]
+"76
+[; ;mem.c: 76:    else
+[e :U 13 ]
+"77
+[; ;mem.c: 77:    {
+{
+"79
+[; ;mem.c: 79:     (*pHeap).byte = nBytes + 0x81;
+[e = . *U _pHeap 0 -> + -> _nBytes `i -> 129 `i `uc ]
+"82
+[; ;mem.c: 82:     temp = pHeap + 1;
+[e = _temp + _pHeap * -> -> 1 `i `x -> -> # *U _pHeap `i `x ]
+"85
+[; ;mem.c: 85:     pHeap += (nBytes + 1);
+[e =+ _pHeap * -> + -> _nBytes `i -> 1 `i `x -> -> # *U _pHeap `i `x ]
+"88
+[; ;mem.c: 88:     (*pHeap).byte = segLen - nBytes;
+[e = . *U _pHeap 0 -> - -> _segLen `i -> _nBytes `i `uc ]
+"91
+[; ;mem.c: 91:     return ((unsigned char *) temp);
+[e ) -> _temp `*uc ]
+[e $UE 3  ]
+"92
+[; ;mem.c: 92:    }
+}
+[e :U 14 ]
+[e :U 12 ]
+"93
+[; ;mem.c: 93:   }
+}
+[e $U 15  ]
+"96
+[; ;mem.c: 96:   else
+[e :U 9 ]
+"97
+[; ;mem.c: 97:   {
+{
+"98
+[; ;mem.c: 98:    pHeap += segHeader.bits.count;
+[e =+ _pHeap * -> -> . . _segHeader 1 0 `i `x -> -> # *U _pHeap `i `x ]
+"99
+[; ;mem.c: 99:   }
+}
+[e :U 15 ]
+"100
+[; ;mem.c: 100:  }
+}
+[e :U 5 ]
+[e $U 6  ]
+[e :U 7 ]
+"101
+[; ;mem.c: 101: }
+[e :UE 3 ]
+}
+"125
+[; ;mem.c: 125: void SRAMfree(unsigned char * pSRAM)
+[v _SRAMfree `(v ~T0 @X0 1 ef1`*uc ]
+"126
+[; ;mem.c: 126: {
+{
+[e :U _SRAMfree ]
+"125
+[; ;mem.c: 125: void SRAMfree(unsigned char * pSRAM)
+[v _pSRAM `*uc ~T0 @X0 1 r1 ]
+"126
+[; ;mem.c: 126: {
+[f ]
+"128
+[; ;mem.c: 128:  (*(SALLOC *)(pSRAM - 1)).bits.alloc = 0;
+[e = . . *U -> - _pSRAM * -> -> 1 `i `x -> -> # *U _pSRAM `i `x `*S1 1 1 -> -> 0 `i `uc ]
+"129
+[; ;mem.c: 129: }
+[e :UE 16 ]
+}
+"151
+[; ;mem.c: 151: void SRAMInitHeap(void)
+[v _SRAMInitHeap `(v ~T0 @X0 1 ef ]
+"152
+[; ;mem.c: 152: {
+{
+[e :U _SRAMInitHeap ]
+[f ]
+"153
+[; ;mem.c: 153:  unsigned char * pHeap;
+[v _pHeap `*uc ~T0 @X0 1 a ]
+"154
+[; ;mem.c: 154:       unsigned int count;
+[v _count `ui ~T0 @X0 1 a ]
+"156
+[; ;mem.c: 156:  pHeap = _uDynamicHeap;
+[e = _pHeap &U __uDynamicHeap ]
+"157
+[; ;mem.c: 157:  count = 0x200 -1;
+[e = _count -> - -> 512 `i -> 1 `i `ui ]
+"159
+[; ;mem.c: 159:  while (1)
+[e :U 19 ]
+"160
+[; ;mem.c: 160:  {
+{
+"161
+[; ;mem.c: 161:   if (count > 0x7F)
+[e $ ! > _count -> -> 127 `i `ui 21  ]
+"162
+[; ;mem.c: 162:   {
+{
+"163
+[; ;mem.c: 163:    *pHeap = 0x7F;
+[e = *U _pHeap -> -> 127 `i `uc ]
+"164
+[; ;mem.c: 164:    pHeap += 0x7F;
+[e =+ _pHeap * -> -> 127 `i `x -> -> # *U _pHeap `i `x ]
+"165
+[; ;mem.c: 165:    count = count - 0x7F;
+[e = _count - _count -> -> 127 `i `ui ]
+"166
+[; ;mem.c: 166:   }
+}
+[e $U 22  ]
+"167
+[; ;mem.c: 167:   else
+[e :U 21 ]
+"168
+[; ;mem.c: 168:   {
+{
+"169
+[; ;mem.c: 169:    *pHeap = count;
+[e = *U _pHeap -> _count `uc ]
+"170
+[; ;mem.c: 170:    *(pHeap + count) = 0;
+[e = *U + _pHeap * -> _count `ux -> -> # *U _pHeap `ui `ux -> -> 0 `i `uc ]
+"171
+[; ;mem.c: 171:    return;
+[e $UE 17  ]
+"172
+[; ;mem.c: 172:   }
+}
+[e :U 22 ]
+"173
+[; ;mem.c: 173:  }
+}
+[e :U 18 ]
+[e $U 19  ]
+[e :U 20 ]
+"174
+[; ;mem.c: 174: }
+[e :UE 17 ]
+}
+"195
+[; ;mem.c: 195:      unsigned char _SRAMmerge(SALLOC * pSegA)
+[v __SRAMmerge `(uc ~T0 @X0 1 ef1`*S1 ]
+"196
+[; ;mem.c: 196: {
+{
+[e :U __SRAMmerge ]
+"195
+[; ;mem.c: 195:      unsigned char _SRAMmerge(SALLOC * pSegA)
+[v _pSegA `*S1 ~T0 @X0 1 r1 ]
+"196
+[; ;mem.c: 196: {
+[f ]
+"197
+[; ;mem.c: 197:  SALLOC * pSegB;
+[v _pSegB `*S1 ~T0 @X0 1 a ]
+"198
+[; ;mem.c: 198:       SALLOC uSegA, uSegB, uSum;
+[v _uSegA `S1 ~T0 @X0 1 a ]
+[v _uSegB `S1 ~T0 @X0 1 a ]
+[v _uSum `S1 ~T0 @X0 1 a ]
+"202
+[; ;mem.c: 202:  pSegB = pSegA + (*pSegA).byte;
+[e = _pSegB + _pSegA * -> -> . *U _pSegA 0 `i `x -> -> # *U _pSegA `i `x ]
+"205
+[; ;mem.c: 205:  uSegA = *pSegA;
+[e = _uSegA *U _pSegA ]
+"206
+[; ;mem.c: 206:  uSegB = *pSegB;
+[e = _uSegB *U _pSegB ]
+"209
+[; ;mem.c: 209:  if (uSegB.byte == 0) return (0);
+[e $ ! == -> . _uSegB 0 `i -> 0 `i 24  ]
+[e ) -> -> 0 `i `uc ]
+[e $UE 23  ]
+[e :U 24 ]
+"212
+[; ;mem.c: 212:  if (uSegA.bits.alloc || uSegB.bits.alloc) return (0);
+[e $ ! || != -> . . _uSegA 1 1 `i -> 0 `i != -> . . _uSegB 1 1 `i -> 0 `i 25  ]
+[e ) -> -> 0 `i `uc ]
+[e $UE 23  ]
+[e :U 25 ]
+"215
+[; ;mem.c: 215:  if (uSegA.bits.count == 0x7F) return (0);
+[e $ ! == -> . . _uSegA 1 0 `i -> 127 `i 26  ]
+[e ) -> -> 0 `i `uc ]
+[e $UE 23  ]
+[e :U 26 ]
+"218
+[; ;mem.c: 218:  uSum.byte = uSegA.byte + uSegB.byte;
+[e = . _uSum 0 -> + -> . _uSegA 0 `i -> . _uSegB 0 `i `uc ]
+"224
+[; ;mem.c: 224:  if ((uSum.byte) > 0x7F)
+[e $ ! > -> . _uSum 0 `i -> 127 `i 27  ]
+"225
+[; ;mem.c: 225:  {
+{
+"226
+[; ;mem.c: 226:   (*pSegA).byte = 0x7F;
+[e = . *U _pSegA 0 -> -> 127 `i `uc ]
+"227
+[; ;mem.c: 227:   pSegA += 0x7F;
+[e =+ _pSegA * -> -> 127 `i `x -> -> # *U _pSegA `i `x ]
+"228
+[; ;mem.c: 228:   pSegB += uSegB.byte;
+[e =+ _pSegB * -> -> . _uSegB 0 `i `x -> -> # *U _pSegB `i `x ]
+"229
+[; ;mem.c: 229:   (*pSegA).byte = pSegB - pSegA;
+[e = . *U _pSegA 0 -> / - -> _pSegB `x -> _pSegA `x -> -> # *U _pSegB `i `x `uc ]
+"231
+[; ;mem.c: 231:   return (0x7F);
+[e ) -> -> 127 `i `uc ]
+[e $UE 23  ]
+"232
+[; ;mem.c: 232:  }
+}
+[e $U 28  ]
+"235
+[; ;mem.c: 235:  else
+[e :U 27 ]
+"236
+[; ;mem.c: 236:  {
+{
+"237
+[; ;mem.c: 237:   return ((*pSegA).byte = uSum.byte);
+[e ) = . *U _pSegA 0 . _uSum 0 ]
+[e $UE 23  ]
+"238
+[; ;mem.c: 238:  }
+}
+[e :U 28 ]
+"239
+[; ;mem.c: 239: }
+[e :UE 23 ]
+}
