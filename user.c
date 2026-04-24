@@ -7,13 +7,16 @@
 
 sem_t s;
 pipe_t p;
+volatile uint8_t one_shot_pending = 0;
 
 void config_user()
 {
     TRISCbits.RC6       = 0;
     TRISCbits.RC7       = 0;
     TRISDbits.RD0       = 0;
+    TRISDbits.RD2       = 0;    // RD2: LED de feedback da one-shot
     ANSELDbits.ANSD0    = 0;
+    ANSELDbits.ANSD2    = 0;
     ANSELCbits.ANSC6    = 0;
     ANSELCbits.ANSC7    = 0;
     
@@ -22,8 +25,9 @@ void config_user()
     sem_init(&s, 0);
     pipe_init(&p);
 
-    pwm_init(1); // inicializa CCP1/RC2; sinal continuo gerado por hardware
-    adc_init();  // inicializa modulo ADC; deve ser chamado uma unica vez
+    pwm_init(1);           // inicializa CCP1/RC2; sinal continuo gerado por hardware
+    adc_init();            // inicializa modulo ADC; deve ser chamado uma unica vez
+    ext_int_init(0, 0);   // INT0/RB0, borda de descida (botao com pull-up)
 }
 
 TASK acionaMotor()
@@ -89,5 +93,17 @@ TASK LED_3()
             PORTDbits.RD0 = 0;
         //os_delay(1);
         //os_task_change_state(WAITING, NULL);
-    }    
+    }
+}
+
+// Task one-shot criada pela ISR ao detectar INT0 (botao em RB0 com pull-up).
+// Executa uma unica vez: faz debounce, valida o evento e encerra via os_task_exit().
+TASK one_shot_task(void)
+{
+    os_delay(2);                            // debounce: aguarda ~2 ticks do scheduler
+    if (PORTBbits.RB0 == 0) {              // valida: botao ainda pressionado?
+        LATDbits.LATD2 = ~LATDbits.LATD2; // feedback visual em RD2
+    }
+    one_shot_pending = 0;  // libera flag antes de sair (permite nova criacao)
+    os_task_exit();        // remove TCB da fila, SRAMfree, chama scheduler
 }

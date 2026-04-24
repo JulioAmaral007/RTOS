@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "scheduler.h"
 #include "os_config.h"
+#include "user.h"
 
 // Quantum do algoritmo Round-Robin
 uint8_t rr_quantum = QUANTUM;
@@ -22,6 +23,17 @@ void setup_hardware(void)
 
 void __interrupt() ISR(void)
 {
+    // INT0 — botao em RB0 (borda de descida, pull-up)
+    // Flag limpa ANTES de qualquer processamento: evita re-disparo se a borda
+    // demorar a cair. one_shot_pending protege contra criacao multipla por rebote.
+    if (INTCONbits.INT0IF) {
+        INTCONbits.INT0IF = 0;
+        if (!one_shot_pending) {
+            one_shot_pending = 1;
+            os_create_task(5, one_shot_task, 6); // id=5, prior=6 (maior que as tasks estaticas)
+        }
+    }
+
     if (INTCONbits.TMR0IF) {
         INTCONbits.TMR0IF = 0;
         

@@ -64,3 +64,22 @@ uint16_t adc_read(uint8_t channel)
     while (ADCON0bits.GO);     // aguarda fim da conversao (~10 µs)
     return (uint16_t)((ADRESH << 8) | ADRESL);
 }
+
+// ---------------------------------------------------------------------------
+// Interrupcao externa INT0 (RB0) do PIC18F46K22
+// GIE nao e habilitado aqui: INT0 usa apenas GIE, que ja e habilitado por
+// os_start() via ENABLE_ALL_INTERRUPTS(). Habilitar GIE antes de os_start()
+// causaria interrupcoes antes do scheduler estar pronto.
+// ---------------------------------------------------------------------------
+
+void ext_int_init(uint8_t int_pin, uint8_t edge)
+{
+    if (int_pin == 0) {
+        TRISBbits.TRISB0    = 1;    // RB0 como entrada
+        ANSELBbits.ANSB0    = 0;    // desabilita AN12 em RB0 (necessario para leitura digital)
+        INTCON2bits.INTEDG0 = edge; // borda: 0=descida (botao pull-up), 1=subida
+        INTCONbits.INT0IF   = 0;    // limpa flag antes de habilitar
+        INTCONbits.INT0IE   = 1;    // habilita interrupcao INT0
+    }
+    // INT1/INT2: nao usados neste projeto (no-op)
+}
