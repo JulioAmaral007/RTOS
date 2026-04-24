@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "sync.h"
 #include "com.h"
+#include "io.h"
 
 sem_t s;
 pipe_t p;
@@ -18,8 +19,10 @@ void config_user()
     
     asm("global _LED_1, _LED_2, _LED_3");
     
-    sem_init(&s, 0);    
+    sem_init(&s, 0);
     pipe_init(&p);
+
+    pwm_init(1); // inicializa CCP1/RC2; sinal continuo gerado por hardware
 }
 
 TASK acionaMotor()
@@ -56,15 +59,22 @@ TASK LED_1()
     }    
 }
 
+// Rampa de duty cycle: 0% -> 100% -> 0% em passos de 1/8 do maximo
 TASK LED_2()
 {
+    uint16_t duty = 0;
+    uint8_t increasing = 1;
     while (1) {
-        
-        //sem_post(&controle_leitura);
-        PORTCbits.RC7 = ~PORTCbits.RC7;
-        //sem_post(&s);
-        //os_delay(5);
-    }    
+        pwm_set_duty(1, duty);
+        os_delay(20);
+        if (increasing) {
+            duty += 128;
+            if (duty >= 1024) { duty = 1024; increasing = 0; }
+        } else {
+            if (duty < 128) { duty = 0; increasing = 1; }
+            else duty -= 128;
+        }
+    }
 }
 
 TASK LED_3()

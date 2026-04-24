@@ -1,6 +1,8 @@
 #ifndef OS_CONFIG_H
 #define	OS_CONFIG_H
 
+#define _XTAL_FREQ 16000000UL  // 16 MHz — clock do sistema (necessario para __delay_*)
+
 #define RR_SCHEDULER        1
 #define PRIOR_SCHEDULER     2
 #define RR_PRIOR_SCHEDULER  3
