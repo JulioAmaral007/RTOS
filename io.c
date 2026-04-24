@@ -34,3 +34,33 @@ void pwm_set_duty(uint8_t channel, uint16_t duty)
     CCPR1L           = (uint8_t)(duty >> 2);        // 8 MSBs
     CCP1CONbits.DC1B = (uint8_t)(duty & 0x03);      // 2 LSBs
 }
+
+// ---------------------------------------------------------------------------
+// ADC via modulo ADC do PIC18F46K22
+// _XTAL_FREQ = 16 MHz → ADCS = Fosc/32 → T_AD = 2 µs (minimo exigido: 1 µs)
+// ACQT = 16 TAD → aquisicao automatica de 32 µs; sem __delay_us adicional necessario
+// Vref+ = VDD (~5 V), Vref- = VSS; resultado justificado a direita (10 bits)
+// ---------------------------------------------------------------------------
+
+void adc_init(void)
+{
+    TRISAbits.RA0    = 1;      // RA0 como entrada digital
+    ANSELAbits.ANSA0 = 1;      // habilita funcao analogica em AN0 (obrigatorio)
+
+    ADCON1bits.PVCFG = 0b00;   // Vref+ = VDD
+    ADCON1bits.NVCFG = 0b00;   // Vref- = VSS
+
+    ADCON2bits.ADFM  = 1;      // justificacao a direita
+    ADCON2bits.ACQT  = 0b110;  // 16 TAD de aquisicao automatica
+    ADCON2bits.ADCS  = 0b010;  // Fosc/32 → T_AD = 2 µs @ 16 MHz
+
+    ADCON0bits.ADON  = 1;      // liga modulo ADC
+}
+
+uint16_t adc_read(uint8_t channel)
+{
+    ADCON0bits.CHS = channel;  // seleciona canal analogico
+    ADCON0bits.GO  = 1;        // inicia conversao
+    while (ADCON0bits.GO);     // aguarda fim da conversao (~10 µs)
+    return (uint16_t)((ADRESH << 8) | ADRESL);
+}

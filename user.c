@@ -23,6 +23,7 @@ void config_user()
     pipe_init(&p);
 
     pwm_init(1); // inicializa CCP1/RC2; sinal continuo gerado por hardware
+    adc_init();  // inicializa modulo ADC; deve ser chamado uma unica vez
 }
 
 TASK acionaMotor()
@@ -46,17 +47,17 @@ TASK apagaLed()
     }    
 }
 
+// Le AN0 e envia 'L' (liga) se tensao >= 2.5 V, 'D' (desliga) caso contrario.
+// LED_3 consome o pipe e aciona RD0 conforme o comando recebido.
 TASK LED_1()
 {
-    //char *acionamento = SRAMAlloc(6);
-    char acionamento[] = {'L', 'L', 'D', 'L', 'D', 'D'};
-    uint8_t pos = 0;
-    while (1) {        
+    while (1) {
+        uint16_t raw = adc_read(0);          // le canal AN0
+        char cmd = (raw >= 512) ? 'L' : 'D'; // threshold: ~2.5 V (512/1023 * 5V)
         PORTCbits.RC6 = ~PORTCbits.RC6;
-        pipe_write(&p, acionamento[pos]);
-        pos = (pos + 1) % 6;
-        //os_delay(5);
-    }    
+        pipe_write(&p, cmd);
+        os_delay(5);
+    }
 }
 
 // Rampa de duty cycle: 0% -> 100% -> 0% em passos de 1/8 do maximo
