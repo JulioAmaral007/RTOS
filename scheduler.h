@@ -6,6 +6,7 @@
 void scheduler(void);
 uint8_t RR_scheduler(void);
 uint8_t priority_scheduler(void);
+uint8_t rr_prior_scheduler(void);
 
 
 #endif	/* SCHEDULER_H */
