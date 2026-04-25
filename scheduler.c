@@ -16,7 +16,7 @@ void scheduler()
   #elif DEFAULT_SCHEDULER == RR_PRIOR_SCHEDULER
     r_queue.pos_task_running = rr_prior_scheduler();
   #endif
-  r_queue.task_running = &r_queue.TASKS[r_queue.pos_task_running];
+  r_queue.task_running = r_queue.TASKS[r_queue.pos_task_running];
 }
 
 uint8_t RR_scheduler()
