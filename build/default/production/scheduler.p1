@@ -1,35 +1,35 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"11 scheduler.c
-[; ;scheduler.c: 11:   r_queue.pos_task_running = RR_scheduler();
-[c E40 0 1 2 3 .. ]
-[n E40 . READY WAITING RUNNING WAITING_SEM  ]
-[v F61 `(v ~T0 @X0 0 tf ]
-"17 ./types.h
-[; ;./types.h: 17: typedef struct hw_stack {
+"17 scheduler.c
+[; ;scheduler.c: 17:     r_queue.pos_task_running = rr_prior_scheduler();
+[c E41 0 1 2 3 4 .. ]
+[n E41 . READY WAITING RUNNING WAITING_SEM WAITING_MUTEX  ]
+[v F63 `(v ~T0 @X0 0 tf ]
+"18 ./types.h
+[; ;./types.h: 18: typedef struct hw_stack {
 [s S1 `uc 1 `uc 1 `uc 1 ]
 [n S1 hw_stack TOSL_REG TOSH_REG TOSU_REG ]
-"23
-[; ;./types.h: 23: typedef struct sw_stack {
+"24
+[; ;./types.h: 24: typedef struct sw_stack {
 [s S2 `S1 -> 31 `i `uc 1 ]
 [n S2 sw_stack stack stack_size ]
-"28
-[; ;./types.h: 28: typedef struct tcb {
-[s S3 `uc 1 `E40 1 `*F61 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `S2 1 ]
+"29
+[; ;./types.h: 29: typedef struct tcb {
+[s S3 `uc 1 `E41 1 `*F63 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `S2 1 ]
 [n S3 tcb task_id task_state task_ptr task_delay task_priority W_REG STATUS_REG BSR_REG PRODL_REG PRODH_REG FSR0L_REG FSR0H_REG FSR1L_REG FSR1H_REG FSR2L_REG FSR2H_REG TABLAT_REG TBLPTRL_REG TBLPTRH_REG TBLPTRU_REG PCLATH_REG PCLATU_REG task_stack ]
-"59
-[; ;./types.h: 59: typedef struct ready_queue {
-[s S4 `S3 -> 4 `i `uc 1 `*S3 1 `uc 1 ]
+"60
+[; ;./types.h: 60: typedef struct ready_queue {
+[s S4 `S3 -> 5 `i `uc 1 `*S3 1 `uc 1 ]
 [n S4 ready_queue TASKS size task_running pos_task_running ]
-"6 scheduler.c
-[; ;scheduler.c: 6: extern ready_queue_t r_queue;
+"7 scheduler.c
+[; ;scheduler.c: 7: extern ready_queue_t r_queue;
 [v _r_queue `S4 ~T0 @X0 0 e ]
-"7 ./scheduler.h
-[; ;./scheduler.h: 7: uint8_t RR_scheduler(void);
-[v _RR_scheduler `(uc ~T0 @X0 0 ef ]
-"22 ./kernel.h
-[; ;./kernel.h: 22: TASK idle();
+"9 ./scheduler.h
+[; ;./scheduler.h: 9: uint8_t rr_prior_scheduler(void);
+[v _rr_prior_scheduler `(uc ~T0 @X0 0 ef ]
+"23 ./kernel.h
+[; ;./kernel.h: 23: TASK idle();
 [v _idle `(v ~T0 @X0 0 e? ]
-[v F6216 `(v ~T0 @X0 0 tf ]
+[v F6219 `(v ~T0 @X0 0 tf ]
 "52 C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 52: __asm("ANSELA equ 0F38h");
 [; <" ANSELA equ 0F38h ;# ">
@@ -789,84 +789,216 @@ Version 4.0 HI-TECH Software Intermediate Code
 "17404
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 17404: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"9 scheduler.c
-[; ;scheduler.c: 9: void scheduler()
+"10 scheduler.c
+[; ;scheduler.c: 10: void scheduler()
 [v _scheduler `(v ~T0 @X0 1 ef ]
-"10
-[; ;scheduler.c: 10: {
+"11
+[; ;scheduler.c: 11: {
 {
 [e :U _scheduler ]
 [f ]
-"11
-[; ;scheduler.c: 11:   r_queue.pos_task_running = RR_scheduler();
-[e = . _r_queue 3 ( _RR_scheduler ..  ]
-"12
-[; ;scheduler.c: 12:   r_queue.task_running = &r_queue.TASKS[r_queue.pos_task_running];
+"17
+[; ;scheduler.c: 17:     r_queue.pos_task_running = rr_prior_scheduler();
+[e = . _r_queue 3 ( _rr_prior_scheduler ..  ]
+"19
+[; ;scheduler.c: 19:   r_queue.task_running = &r_queue.TASKS[r_queue.pos_task_running];
 [e = . _r_queue 2 &U *U + &U . _r_queue 0 * -> . _r_queue 3 `ux -> -> # *U &U . _r_queue 0 `ui `ux ]
-"13
-[; ;scheduler.c: 13: }
+"20
+[; ;scheduler.c: 20: }
 [e :UE 880 ]
 }
-"15
-[; ;scheduler.c: 15: uint8_t RR_scheduler()
+"22
+[; ;scheduler.c: 22: uint8_t RR_scheduler()
 [v _RR_scheduler `(uc ~T0 @X0 1 ef ]
-"16
-[; ;scheduler.c: 16: {
+"23
+[; ;scheduler.c: 23: {
 {
 [e :U _RR_scheduler ]
 [f ]
-"17
-[; ;scheduler.c: 17:     uint8_t prox = r_queue.pos_task_running, tentativas = 0;
+"24
+[; ;scheduler.c: 24:     uint8_t prox = r_queue.pos_task_running, tentativas = 0;
 [v _prox `uc ~T0 @X0 1 a ]
 [e = _prox . _r_queue 3 ]
 [v _tentativas `uc ~T0 @X0 1 a ]
 [e = _tentativas -> -> 0 `i `uc ]
-"19
-[; ;scheduler.c: 19:     do {
+"26
+[; ;scheduler.c: 26:     do {
 [e :U 884 ]
 {
-"20
-[; ;scheduler.c: 20:         prox = (prox+1) % r_queue.size;
+"27
+[; ;scheduler.c: 27:         prox = (prox+1) % r_queue.size;
 [e = _prox -> % + -> _prox `i -> 1 `i -> . _r_queue 1 `i `uc ]
-"21
-[; ;scheduler.c: 21:         tentativas++;
+"28
+[; ;scheduler.c: 28:         tentativas++;
 [e ++ _tentativas -> -> 1 `i `uc ]
-"22
-[; ;scheduler.c: 22:         if (tentativas >= (3 +1)) return 0;
-[e $ ! >= -> _tentativas `i + -> 3 `i -> 1 `i 885  ]
+"29
+[; ;scheduler.c: 29:         if (tentativas >= (4 +1)) return 0;
+[e $ ! >= -> _tentativas `i + -> 4 `i -> 1 `i 885  ]
 [e ) -> -> 0 `i `uc ]
 [e $UE 881  ]
 [e :U 885 ]
-"23
-[; ;scheduler.c: 23:     } while (r_queue.TASKS[prox].task_state != READY ||
+"30
+[; ;scheduler.c: 30:     } while (r_queue.TASKS[prox].task_state != READY ||
 }
-[e $ || != -> . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E40 0 `ui == . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 2 -> &U _idle `*F6216 884  ]
+[e $ || != -> . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E41 0 `ui == . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 2 -> &U _idle `*F6219 884  ]
 [e :U 883 ]
-"26
-[; ;scheduler.c: 26:     return prox;
+"33
+[; ;scheduler.c: 33:     return prox;
 [e ) _prox ]
 [e $UE 881  ]
-"27
-[; ;scheduler.c: 27: }
+"34
+[; ;scheduler.c: 34: }
 [e :UE 881 ]
 }
-"29
-[; ;scheduler.c: 29: uint8_t priority_scheduler(void)
+"36
+[; ;scheduler.c: 36: uint8_t priority_scheduler(void)
 [v _priority_scheduler `(uc ~T0 @X0 1 ef ]
-"30
-[; ;scheduler.c: 30: {
+"37
+[; ;scheduler.c: 37: {
 {
 [e :U _priority_scheduler ]
 [f ]
-"31
-[; ;scheduler.c: 31:     uint8_t prox = r_queue.pos_task_running;
+"38
+[; ;scheduler.c: 38:     uint8_t prox = r_queue.pos_task_running;
 [v _prox `uc ~T0 @X0 1 a ]
 [e = _prox . _r_queue 3 ]
-"35
-[; ;scheduler.c: 35:     return prox;
+"40
+[; ;scheduler.c: 40:     while (r_queue.TASKS[prox].task_state != READY)
+[e $U 887  ]
+[e :U 888 ]
+"41
+[; ;scheduler.c: 41:         prox = (prox + 1) % r_queue.size;
+[e = _prox -> % + -> _prox `i -> 1 `i -> . _r_queue 1 `i `uc ]
+[e :U 887 ]
+"40
+[; ;scheduler.c: 40:     while (r_queue.TASKS[prox].task_state != READY)
+[e $ != -> . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E41 0 `ui 888  ]
+[e :U 889 ]
+"43
+[; ;scheduler.c: 43:     uint8_t current_task = r_queue.TASKS[prox].task_priority;
+[v _current_task `uc ~T0 @X0 1 a ]
+[e = _current_task . *U + &U . _r_queue 0 * -> _prox `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 ]
+"45
+[; ;scheduler.c: 45:     for (uint8_t i = 1; i < r_queue.size; i++) {
+{
+[v _i `uc ~T0 @X0 1 a ]
+[e = _i -> -> 1 `i `uc ]
+[e $U 893  ]
+[e :U 890 ]
+{
+"46
+[; ;scheduler.c: 46:         if (r_queue.TASKS[i].task_state == READY &&
+[e $ ! && == -> . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E41 0 `ui > -> . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 `i -> _current_task `i 894  ]
+"47
+[; ;scheduler.c: 47:             r_queue.TASKS[i].task_priority > current_task) {
+{
+"48
+[; ;scheduler.c: 48:             prox = i;
+[e = _prox _i ]
+"49
+[; ;scheduler.c: 49:             current_task = r_queue.TASKS[i].task_priority;
+[e = _current_task . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 ]
+"50
+[; ;scheduler.c: 50:         }
+}
+[e :U 894 ]
+"51
+[; ;scheduler.c: 51:     }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 893 ]
+[e $ < -> _i `i -> . _r_queue 1 `i 890  ]
+[e :U 891 ]
+}
+"53
+[; ;scheduler.c: 53:     return prox;
 [e ) _prox ]
 [e $UE 886  ]
-"36
-[; ;scheduler.c: 36: }
+"54
+[; ;scheduler.c: 54: }
 [e :UE 886 ]
+}
+"60
+[; ;scheduler.c: 60: uint8_t rr_prior_scheduler(void)
+[v _rr_prior_scheduler `(uc ~T0 @X0 1 ef ]
+"61
+[; ;scheduler.c: 61: {
+{
+[e :U _rr_prior_scheduler ]
+[f ]
+"62
+[; ;scheduler.c: 62:     uint8_t i;
+[v _i `uc ~T0 @X0 1 a ]
+"63
+[; ;scheduler.c: 63:     uint8_t highest_prio = 0;
+[v _highest_prio `uc ~T0 @X0 1 a ]
+[e = _highest_prio -> -> 0 `i `uc ]
+"65
+[; ;scheduler.c: 65:     for (i = 0; i < r_queue.size; i++) {
+{
+[e = _i -> -> 0 `i `uc ]
+[e $U 899  ]
+[e :U 896 ]
+{
+"66
+[; ;scheduler.c: 66:         if (r_queue.TASKS[i].task_state == READY &&
+[e $ ! && == -> . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E41 0 `ui > -> . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 `i -> _highest_prio `i 900  ]
+"67
+[; ;scheduler.c: 67:             r_queue.TASKS[i].task_priority > highest_prio) {
+{
+"68
+[; ;scheduler.c: 68:             highest_prio = r_queue.TASKS[i].task_priority;
+[e = _highest_prio . *U + &U . _r_queue 0 * -> _i `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 ]
+"69
+[; ;scheduler.c: 69:         }
+}
+[e :U 900 ]
+"70
+[; ;scheduler.c: 70:     }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 899 ]
+[e $ < -> _i `i -> . _r_queue 1 `i 896  ]
+[e :U 897 ]
+}
+"72
+[; ;scheduler.c: 72:     for (i = 1; i <= r_queue.size; i++) {
+{
+[e = _i -> -> 1 `i `uc ]
+[e $U 904  ]
+[e :U 901 ]
+{
+"73
+[; ;scheduler.c: 73:         uint8_t idx = (r_queue.pos_task_running + i) % r_queue.size;
+[v _idx `uc ~T0 @X0 1 a ]
+[e = _idx -> % + -> . _r_queue 3 `i -> _i `i -> . _r_queue 1 `i `uc ]
+"74
+[; ;scheduler.c: 74:         if (r_queue.TASKS[idx].task_state == READY &&
+[e $ ! && == -> . *U + &U . _r_queue 0 * -> _idx `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 `ui -> . `E41 0 `ui == -> . *U + &U . _r_queue 0 * -> _idx `ux -> -> # *U &U . _r_queue 0 `ui `ux 4 `i -> _highest_prio `i 905  ]
+"75
+[; ;scheduler.c: 75:             r_queue.TASKS[idx].task_priority == highest_prio) {
+{
+"76
+[; ;scheduler.c: 76:             return idx;
+[e ) _idx ]
+[e $UE 895  ]
+"77
+[; ;scheduler.c: 77:         }
+}
+[e :U 905 ]
+"78
+[; ;scheduler.c: 78:     }
+}
+[e ++ _i -> -> 1 `i `uc ]
+[e :U 904 ]
+[e $ <= -> _i `i -> . _r_queue 1 `i 901  ]
+[e :U 902 ]
+}
+"80
+[; ;scheduler.c: 80:     return 0;
+[e ) -> -> 0 `i `uc ]
+[e $UE 895  ]
+"81
+[; ;scheduler.c: 81: }
+[e :UE 895 ]
 }

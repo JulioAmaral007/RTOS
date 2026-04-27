@@ -7,14 +7,16 @@
 
 
 typedef struct pipe {
-    char fila_dados[PIPE_MAX_SIZE];
-    uint8_t pos_input;
-    uint8_t pos_output;
-    sem_t s_input;
-    sem_t s_output;    
+    char    *fila_dados;   // buffer alocado dinamicamente via SRAMalloc
+    uint8_t  capacity;     // tamanho do buffer alocado
+    uint8_t  pos_input;
+    uint8_t  pos_output;
+    sem_t    s_input;
+    sem_t    s_output;
 } pipe_t;
 
 void pipe_init(pipe_t *p);
+void pipe_destroy(pipe_t *p);
 void pipe_read(pipe_t *p, char *dado);
 void pipe_write(pipe_t *p, char dado);
 

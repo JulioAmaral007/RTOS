@@ -9846,7 +9846,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -9894,7 +9895,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -9916,6 +9917,7 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 # 3 "hw.c" 2
@@ -9928,8 +9930,23 @@ TASK idle();
 void scheduler(void);
 uint8_t RR_scheduler(void);
 uint8_t priority_scheduler(void);
+uint8_t rr_prior_scheduler(void);
 # 4 "hw.c" 2
 
+# 1 "./user.h" 1
+
+
+
+
+
+
+void config_user(void);
+
+TASK task_sensor(void);
+TASK task_display(void);
+TASK task_pwm(void);
+TASK one_shot_task(void);
+# 6 "hw.c" 2
 
 
 uint8_t rr_quantum = 5;
@@ -9950,6 +9967,17 @@ void setup_hardware(void)
 
 void __attribute__((picinterrupt(("")))) ISR(void)
 {
+
+
+
+
+    if (INTCONbits.INT0IF) {
+        INTCONbits.INT0IF = 0;
+        if (r_queue.size < 4 + 1) {
+            os_create_task(5, one_shot_task, 6);
+        }
+    }
+
     if (INTCONbits.TMR0IF) {
         INTCONbits.TMR0IF = 0;
 

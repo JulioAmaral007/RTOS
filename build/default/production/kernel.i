@@ -129,7 +129,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -177,7 +178,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -9915,6 +9916,7 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 # 2 "kernel.c" 2
@@ -9927,6 +9929,7 @@ TASK idle();
 void scheduler(void);
 uint8_t RR_scheduler(void);
 uint8_t priority_scheduler(void);
+uint8_t rr_prior_scheduler(void);
 # 3 "kernel.c" 2
 # 1 "./user.h" 1
 
@@ -9934,16 +9937,13 @@ uint8_t priority_scheduler(void);
 
 
 
+
 void config_user(void);
 
-TASK acionaMotor(void);
-TASK ligaLed(void);
-TASK apagaLed(void);
-
-
-TASK LED_1(void);
-TASK LED_2(void);
-TASK LED_3(void);
+TASK task_sensor(void);
+TASK task_display(void);
+TASK task_pwm(void);
+TASK one_shot_task(void);
 # 4 "kernel.c" 2
 # 1 "./hw.h" 1
 
@@ -10000,7 +10000,6 @@ void os_create_task(uint8_t id, f_ptr func, uint8_t prior)
     new_task.W_REG = 0;
     new_task.task_stack.stack_size = 0;
 
-
     r_queue.TASKS[r_queue.size++] = new_task;
 }
 
@@ -10018,11 +10017,12 @@ void os_yield()
 void os_config()
 {
     r_queue.size = 0;
-    r_queue.task_running = &r_queue.TASKS[0];
+    r_queue.task_running = ((void*)0);
     r_queue.pos_task_running = 0;
 
 
     os_create_task(1, idle, 0);
+    r_queue.task_running = &r_queue.TASKS[0];
     __asm("global _idle");
 
     config_user();
@@ -10052,6 +10052,17 @@ void os_task_change_state(state_t new_state, tcb_t *task_handle)
     INTCONbits.GIE = 1;;
 }
 
+
+
+void os_task_exit(void)
+{
+    INTCONbits.GIE = 0;;
+
+    r_queue.size--;
+    scheduler();
+    do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
+    INTCONbits.GIE = 1;;
+}
 
 TASK idle()
 {

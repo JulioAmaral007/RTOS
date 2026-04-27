@@ -144,7 +144,7 @@ void SRAMInitHeap(void)
   }
   else
   {
-   *pHeap = count;
+   *pHeap = (unsigned char)count;
    *(pHeap + count) = 0;
    return;
   }
@@ -185,7 +185,7 @@ void SRAMInitHeap(void)
   (*pSegA).byte = 0x7F;
   pSegA += 0x7F;
   pSegB += uSegB.byte;
-  (*pSegA).byte = pSegB - pSegA;
+  (*pSegA).byte = (unsigned char)(pSegB - pSegA);
 
   return (0x7F);
  }

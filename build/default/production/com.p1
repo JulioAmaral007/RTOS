@@ -1,107 +1,150 @@
 Version 4.0 HI-TECH Software Intermediate Code
 "8 ./sync.h
 [; ;./sync.h: 8: typedef struct sem {
-[s S5 `i 1 `uc -> 3 `i `uc 1 `uc 1 ]
+[s S5 `i 1 `uc -> 4 `i `uc 1 `uc 1 ]
 [n S5 sem contador fila pos_input pos_output ]
 "9 ./com.h
 [; ;./com.h: 9: typedef struct pipe {
-[s S6 `uc -> 4 `i `uc 1 `uc 1 `S5 1 `S5 1 ]
-[n S6 pipe fila_dados pos_input pos_output s_input s_output ]
+[s S7 `*uc 1 `uc 1 `uc 1 `uc 1 `S5 1 `S5 1 ]
+[n S7 pipe fila_dados capacity pos_input pos_output s_input s_output ]
+"150 ./mem.h
+[v _SRAMalloc `(*uc ~T0 @X0 0 ef1`uc ]
 "16 ./sync.h
 [; ;./sync.h: 16: void sem_init(sem_t *sem, uint8_t valor);
 [v _sem_init `(v ~T0 @X0 0 ef2`*S5`uc ]
-"17
+"151 ./mem.h
+[v _SRAMfree `(v ~T0 @X0 0 ef1`*uc ]
+"17 ./sync.h
 [; ;./sync.h: 17: void sem_wait(sem_t *sem);
 [v _sem_wait `(v ~T0 @X0 0 ef1`*S5 ]
 "18
 [; ;./sync.h: 18: void sem_post(sem_t *sem);
 [v _sem_post `(v ~T0 @X0 0 ef1`*S5 ]
-"3 com.c
-[; ;com.c: 3: void pipe_init(pipe_t *p)
-[v _pipe_init `(v ~T0 @X0 1 ef1`*S6 ]
-"4
-[; ;com.c: 4: {
+"136 ./mem.h
+[v __uDynamicHeap `uc ~T0 @X0 -> 512 `i e ]
+"5 com.c
+[; ;com.c: 5: void pipe_init(pipe_t *p)
+[v _pipe_init `(v ~T0 @X0 1 ef1`*S7 ]
+"6
+[; ;com.c: 6: {
 {
 [e :U _pipe_init ]
-"3
-[; ;com.c: 3: void pipe_init(pipe_t *p)
-[v _p `*S6 ~T0 @X0 1 r1 ]
-"4
-[; ;com.c: 4: {
-[f ]
 "5
-[; ;com.c: 5:     p->pos_input = 0;
-[e = . *U _p 1 -> -> 0 `i `uc ]
+[; ;com.c: 5: void pipe_init(pipe_t *p)
+[v _p `*S7 ~T0 @X0 1 r1 ]
 "6
-[; ;com.c: 6:     p->pos_output = 0;
-[e = . *U _p 2 -> -> 0 `i `uc ]
+[; ;com.c: 6: {
+[f ]
 "7
-[; ;com.c: 7:     sem_init(&p->s_input, 4);
-[e ( _sem_init (2 , &U . *U _p 3 -> -> 4 `i `uc ]
+[; ;com.c: 7:     p->fila_dados = (char *) SRAMalloc(4);
+[e = . *U _p 0 -> ( _SRAMalloc (1 -> -> 4 `i `uc `*uc ]
 "8
-[; ;com.c: 8:     sem_init(&p->s_output, 0);
-[e ( _sem_init (2 , &U . *U _p 4 -> -> 0 `i `uc ]
+[; ;com.c: 8:     if (p->fila_dados == ((void*)0)) return;
+[e $ ! == . *U _p 0 -> -> -> 0 `i `*v `*uc 11  ]
+[e $UE 10  ]
+[e :U 11 ]
 "9
-[; ;com.c: 9: }
-[e :UE 7 ]
-}
+[; ;com.c: 9:     p->capacity = 4;
+[e = . *U _p 1 -> -> 4 `i `uc ]
+"10
+[; ;com.c: 10:     p->pos_input = 0;
+[e = . *U _p 2 -> -> 0 `i `uc ]
 "11
-[; ;com.c: 11: void pipe_write(pipe_t *p, char dado)
-[v _pipe_write `(v ~T0 @X0 1 ef2`*S6`uc ]
+[; ;com.c: 11:     p->pos_output = 0;
+[e = . *U _p 3 -> -> 0 `i `uc ]
 "12
-[; ;com.c: 12: {
+[; ;com.c: 12:     sem_init(&p->s_input, 4);
+[e ( _sem_init (2 , &U . *U _p 4 -> -> 4 `i `uc ]
+"13
+[; ;com.c: 13:     sem_init(&p->s_output, 0);
+[e ( _sem_init (2 , &U . *U _p 5 -> -> 0 `i `uc ]
+"14
+[; ;com.c: 14: }
+[e :UE 10 ]
+}
+"16
+[; ;com.c: 16: void pipe_destroy(pipe_t *p)
+[v _pipe_destroy `(v ~T0 @X0 1 ef1`*S7 ]
+"17
+[; ;com.c: 17: {
+{
+[e :U _pipe_destroy ]
+"16
+[; ;com.c: 16: void pipe_destroy(pipe_t *p)
+[v _p `*S7 ~T0 @X0 1 r1 ]
+"17
+[; ;com.c: 17: {
+[f ]
+"18
+[; ;com.c: 18:     SRAMfree((unsigned char *) p->fila_dados);
+[e ( _SRAMfree (1 -> . *U _p 0 `*uc ]
+"19
+[; ;com.c: 19:     p->fila_dados = ((void*)0);
+[e = . *U _p 0 -> -> -> 0 `i `*v `*uc ]
+"20
+[; ;com.c: 20:     p->capacity = 0;
+[e = . *U _p 1 -> -> 0 `i `uc ]
+"21
+[; ;com.c: 21: }
+[e :UE 12 ]
+}
+"23
+[; ;com.c: 23: void pipe_write(pipe_t *p, char dado)
+[v _pipe_write `(v ~T0 @X0 1 ef2`*S7`uc ]
+"24
+[; ;com.c: 24: {
 {
 [e :U _pipe_write ]
-"11
-[; ;com.c: 11: void pipe_write(pipe_t *p, char dado)
-[v _p `*S6 ~T0 @X0 1 r1 ]
+"23
+[; ;com.c: 23: void pipe_write(pipe_t *p, char dado)
+[v _p `*S7 ~T0 @X0 1 r1 ]
 [v _dado `uc ~T0 @X0 1 r2 ]
-"12
-[; ;com.c: 12: {
+"24
+[; ;com.c: 24: {
 [f ]
-"13
-[; ;com.c: 13:     sem_wait(&p->s_input);
-[e ( _sem_wait (1 &U . *U _p 3 ]
-"14
-[; ;com.c: 14:     p->fila_dados[p->pos_input] = dado;
-[e = *U + &U . *U _p 0 * -> . *U _p 1 `ux -> -> # *U &U . *U _p 0 `ui `ux _dado ]
-"15
-[; ;com.c: 15:     p->pos_input = (p->pos_input + 1) % 4;
-[e = . *U _p 1 -> % + -> . *U _p 1 `i -> 1 `i -> 4 `i `uc ]
-"16
-[; ;com.c: 16:     sem_post(&p->s_output);
-[e ( _sem_post (1 &U . *U _p 4 ]
-"17
-[; ;com.c: 17: }
-[e :UE 8 ]
+"25
+[; ;com.c: 25:     sem_wait(&p->s_input);
+[e ( _sem_wait (1 &U . *U _p 4 ]
+"26
+[; ;com.c: 26:     p->fila_dados[p->pos_input] = dado;
+[e = *U + . *U _p 0 * -> . *U _p 2 `ux -> -> # *U . *U _p 0 `ui `ux _dado ]
+"27
+[; ;com.c: 27:     p->pos_input = (p->pos_input + 1) % p->capacity;
+[e = . *U _p 2 -> % + -> . *U _p 2 `i -> 1 `i -> . *U _p 1 `i `uc ]
+"28
+[; ;com.c: 28:     sem_post(&p->s_output);
+[e ( _sem_post (1 &U . *U _p 5 ]
+"29
+[; ;com.c: 29: }
+[e :UE 13 ]
 }
-"19
-[; ;com.c: 19: void pipe_read(pipe_t *p, char *dado)
-[v _pipe_read `(v ~T0 @X0 1 ef2`*S6`*uc ]
-"20
-[; ;com.c: 20: {
+"31
+[; ;com.c: 31: void pipe_read(pipe_t *p, char *dado)
+[v _pipe_read `(v ~T0 @X0 1 ef2`*S7`*uc ]
+"32
+[; ;com.c: 32: {
 {
 [e :U _pipe_read ]
-"19
-[; ;com.c: 19: void pipe_read(pipe_t *p, char *dado)
-[v _p `*S6 ~T0 @X0 1 r1 ]
+"31
+[; ;com.c: 31: void pipe_read(pipe_t *p, char *dado)
+[v _p `*S7 ~T0 @X0 1 r1 ]
 [v _dado `*uc ~T0 @X0 1 r2 ]
-"20
-[; ;com.c: 20: {
+"32
+[; ;com.c: 32: {
 [f ]
-"21
-[; ;com.c: 21:     sem_wait(&p->s_output);
-[e ( _sem_wait (1 &U . *U _p 4 ]
-"22
-[; ;com.c: 22:     *dado = p->fila_dados[p->pos_output];
-[e = *U _dado *U + &U . *U _p 0 * -> . *U _p 2 `ux -> -> # *U &U . *U _p 0 `ui `ux ]
-"23
-[; ;com.c: 23:     p->pos_output = (p->pos_output + 1) % 4;
-[e = . *U _p 2 -> % + -> . *U _p 2 `i -> 1 `i -> 4 `i `uc ]
-"24
-[; ;com.c: 24:     sem_post(&p->s_input);
-[e ( _sem_post (1 &U . *U _p 3 ]
-"25
-[; ;com.c: 25: }
-[e :UE 9 ]
+"33
+[; ;com.c: 33:     sem_wait(&p->s_output);
+[e ( _sem_wait (1 &U . *U _p 5 ]
+"34
+[; ;com.c: 34:     *dado = p->fila_dados[p->pos_output];
+[e = *U _dado *U + . *U _p 0 * -> . *U _p 3 `ux -> -> # *U . *U _p 0 `ui `ux ]
+"35
+[; ;com.c: 35:     p->pos_output = (p->pos_output + 1) % p->capacity;
+[e = . *U _p 3 -> % + -> . *U _p 3 `i -> 1 `i -> . *U _p 1 `i `uc ]
+"36
+[; ;com.c: 36:     sem_post(&p->s_input);
+[e ( _sem_post (1 &U . *U _p 4 ]
+"37
+[; ;com.c: 37: }
+[e :UE 14 ]
 }

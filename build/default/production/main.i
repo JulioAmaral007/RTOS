@@ -7,10 +7,7 @@
 # 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/language_support.h" 1 3
 # 2 "<built-in>" 2
 # 1 "main.c" 2
-
-
-
-
+# 20 "main.c"
 # 1 "./kernel.h" 1
 
 
@@ -133,7 +130,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -181,7 +179,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -9919,10 +9917,12 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
-# 6 "main.c" 2
+# 21 "main.c" 2
 # 1 "./user.h" 1
+
 
 
 
@@ -9930,33 +9930,64 @@ TASK idle();
 
 void config_user(void);
 
-TASK acionaMotor(void);
-TASK ligaLed(void);
-TASK apagaLed(void);
-
-
-TASK LED_1(void);
-TASK LED_2(void);
-TASK LED_3(void);
-# 7 "main.c" 2
-
-int main()
+TASK task_sensor(void);
+TASK task_display(void);
+TASK task_pwm(void);
+TASK one_shot_task(void);
+# 22 "main.c" 2
+# 1 "./mem.h" 1
+# 118 "./mem.h"
+typedef union _SALLOC
 {
+ unsigned char byte;
+ struct _BITS
+ {
+  unsigned count:7;
+  unsigned alloc:1;
+ }bits;
+}SALLOC;
+
+
+
+
+
+
+
+
+#pragma udata _SRAM_ALLOC_HEAP
+unsigned char _uDynamicHeap[0x200];
+
+
+
+
+
+#pragma udata _SRAM_ALLOC
+
+
+
+
+
+
+     unsigned char _SRAMmerge(SALLOC * pSegA);
+unsigned char * SRAMalloc( unsigned char nBytes);
+void SRAMfree(unsigned char * pSRAM);
+void SRAMInitHeap(void);
+# 23 "main.c" 2
+
+int main(void)
+{
+    SRAMInitHeap();
     os_config();
 
 
+    os_create_task(2, task_sensor, 5);
+    os_create_task(3, task_display, 5);
+    os_create_task(4, task_pwm, 5);
 
 
-
-    os_create_task(2, LED_1, 5);
-    os_create_task(3, LED_2, 5);
-    os_create_task(4, LED_3, 5);
 
     os_start();
 
-    while (1) {
-
-    }
-
+    while (1) {}
     return 0;
 }

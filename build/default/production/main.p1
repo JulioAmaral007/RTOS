@@ -1,21 +1,23 @@
 Version 4.0 HI-TECH Software Intermediate Code
 [p mainexit ]
+"152 ./mem.h
+[v _SRAMInitHeap `(v ~T0 @X0 0 ef ]
 "18 ./kernel.h
 [; ;./kernel.h: 18: void os_config(void);
 [v _os_config `(v ~T0 @X0 0 ef ]
-[v F6195 `(v ~T0 @X0 0 tf ]
+[v F6196 `(v ~T0 @X0 0 tf ]
 "16
 [; ;./kernel.h: 16: void os_create_task(uint8_t id, f_ptr func, uint8_t prior);
-[v _os_create_task `(v ~T0 @X0 0 ef3`uc`*F6195`uc ]
-"13 ./user.h
-[; ;./user.h: 13: TASK LED_1(void);
-[v _LED_1 `(v ~T0 @X0 0 ef ]
-"14
-[; ;./user.h: 14: TASK LED_2(void);
-[v _LED_2 `(v ~T0 @X0 0 ef ]
-"15
-[; ;./user.h: 15: TASK LED_3(void);
-[v _LED_3 `(v ~T0 @X0 0 ef ]
+[v _os_create_task `(v ~T0 @X0 0 ef3`uc`*F6196`uc ]
+"9 ./user.h
+[; ;./user.h: 9: TASK task_sensor(void);
+[v _task_sensor `(v ~T0 @X0 0 ef ]
+"10
+[; ;./user.h: 10: TASK task_display(void);
+[v _task_display `(v ~T0 @X0 0 ef ]
+"11
+[; ;./user.h: 11: TASK task_pwm(void);
+[v _task_pwm `(v ~T0 @X0 0 ef ]
 "19 ./kernel.h
 [; ;./kernel.h: 19: void os_start(void);
 [v _os_start `(v ~T0 @X0 0 ef ]
@@ -778,45 +780,48 @@ Version 4.0 HI-TECH Software Intermediate Code
 "17404
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 17404: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
+"136 ./mem.h
+[v __uDynamicHeap `uc ~T0 @X0 -> 512 `i e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
-"8 main.c
-[; ;main.c: 8: int main()
+"24 main.c
+[; ;main.c: 24: int main(void)
 [v _main `(i ~T0 @X0 1 ef ]
-"9
-[; ;main.c: 9: {
+"25
+[; ;main.c: 25: {
 {
 [e :U _main ]
 [f ]
-"10
-[; ;main.c: 10:     os_config();
-[e ( _os_config ..  ]
-"16
-[; ;main.c: 16:     os_create_task(2, LED_1, 5);
-[e ( _os_create_task (3 , , -> -> 2 `i `uc &U _LED_1 -> -> 5 `i `uc ]
-"17
-[; ;main.c: 17:     os_create_task(3, LED_2, 5);
-[e ( _os_create_task (3 , , -> -> 3 `i `uc &U _LED_2 -> -> 5 `i `uc ]
-"18
-[; ;main.c: 18:     os_create_task(4, LED_3, 5);
-[e ( _os_create_task (3 , , -> -> 4 `i `uc &U _LED_3 -> -> 5 `i `uc ]
-"20
-[; ;main.c: 20:     os_start();
-[e ( _os_start ..  ]
-"22
-[; ;main.c: 22:     while (1) {
-[e :U 882 ]
-{
-"24
-[; ;main.c: 24:     }
-}
-[e :U 881 ]
-[e $U 882  ]
-[e :U 883 ]
 "26
-[; ;main.c: 26:     return 0;
-[e ) -> 0 `i ]
-[e $UE 880  ]
+[; ;main.c: 26:     SRAMInitHeap();
+[e ( _SRAMInitHeap ..  ]
 "27
-[; ;main.c: 27: }
-[e :UE 880 ]
+[; ;main.c: 27:     os_config();
+[e ( _os_config ..  ]
+"30
+[; ;main.c: 30:     os_create_task(2, task_sensor, 5);
+[e ( _os_create_task (3 , , -> -> 2 `i `uc &U _task_sensor -> -> 5 `i `uc ]
+"31
+[; ;main.c: 31:     os_create_task(3, task_display, 5);
+[e ( _os_create_task (3 , , -> -> 3 `i `uc &U _task_display -> -> 5 `i `uc ]
+"32
+[; ;main.c: 32:     os_create_task(4, task_pwm, 5);
+[e ( _os_create_task (3 , , -> -> 4 `i `uc &U _task_pwm -> -> 5 `i `uc ]
+"36
+[; ;main.c: 36:     os_start();
+[e ( _os_start ..  ]
+"38
+[; ;main.c: 38:     while (1) {}
+[e :U 884 ]
+{
+}
+[e :U 883 ]
+[e $U 884  ]
+[e :U 885 ]
+"39
+[; ;main.c: 39:     return 0;
+[e ) -> 0 `i ]
+[e $UE 882  ]
+"40
+[; ;main.c: 40: }
+[e :UE 882 ]
 }

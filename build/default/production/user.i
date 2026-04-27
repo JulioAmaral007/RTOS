@@ -129,7 +129,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -177,23 +178,20 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
 } ready_queue_t;
 # 5 "./user.h" 2
 
+
 void config_user(void);
 
-TASK acionaMotor(void);
-TASK ligaLed(void);
-TASK apagaLed(void);
-
-
-TASK LED_1(void);
-TASK LED_2(void);
-TASK LED_3(void);
+TASK task_sensor(void);
+TASK task_display(void);
+TASK task_pwm(void);
+TASK one_shot_task(void);
 # 2 "user.c" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/xc.h" 3
@@ -9933,6 +9931,7 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 # 4 "user.c" 2
@@ -9946,7 +9945,7 @@ TASK idle();
 
 typedef struct sem {
     int contador;
-    uint8_t fila[3];
+    uint8_t fila[4];
     uint8_t pos_input;
     uint8_t pos_output;
 } sem_t;
@@ -9955,6 +9954,18 @@ typedef struct sem {
 void sem_init(sem_t *sem, uint8_t valor);
 void sem_wait(sem_t *sem);
 void sem_post(sem_t *sem);
+# 28 "./sync.h"
+typedef struct {
+    uint8_t locked;
+    uint8_t owner_pos;
+    uint8_t fila[4];
+    uint8_t pos_input;
+    uint8_t pos_output;
+} mutex_t;
+
+void mutex_init(mutex_t *m);
+void mutex_lock(mutex_t *m);
+void mutex_unlock(mutex_t *m);
 # 5 "user.c" 2
 # 1 "./com.h" 1
 
@@ -9966,7 +9977,8 @@ void sem_post(sem_t *sem);
 
 
 typedef struct pipe {
-    char fila_dados[4];
+    char *fila_dados;
+    uint8_t capacity;
     uint8_t pos_input;
     uint8_t pos_output;
     sem_t s_input;
@@ -9974,82 +9986,145 @@ typedef struct pipe {
 } pipe_t;
 
 void pipe_init(pipe_t *p);
+void pipe_destroy(pipe_t *p);
 void pipe_read(pipe_t *p, char *dado);
 void pipe_write(pipe_t *p, char dado);
 # 6 "user.c" 2
+# 1 "./io.h" 1
 
-sem_t s;
-pipe_t p;
 
-void config_user()
+
+
+
+
+
+void pwm_init(uint8_t channel);
+void pwm_set_duty(uint8_t channel, uint16_t duty);
+
+
+void adc_init(void);
+uint16_t adc_read(uint8_t channel);
+
+
+void ext_int_init(uint8_t int_pin, uint8_t edge);
+# 7 "user.c" 2
+
+
+static volatile uint8_t temp_global = 0;
+
+
+static mutex_t m_temp;
+
+
+static sem_t s_new_data;
+
+
+static pipe_t p_temp;
+# 28 "user.c"
+void config_user(void)
 {
-    TRISCbits.RC6 = 0;
-    TRISCbits.RC7 = 0;
+
+    TRISEbits.RE0 = 0;
+    ANSELEbits.ANSE0 = 0;
+    TRISEbits.RE1 = 0;
+    ANSELEbits.ANSE1 = 0;
+    TRISEbits.RE2 = 0;
+    ANSELEbits.ANSE2 = 0;
+
+
     TRISDbits.RD0 = 0;
     ANSELDbits.ANSD0 = 0;
-    ANSELCbits.ANSC6 = 0;
-    ANSELCbits.ANSC7 = 0;
+    TRISDbits.RD2 = 0;
+    ANSELDbits.ANSD2 = 0;
 
-    __asm("global _LED_1, _LED_2, _LED_3");
 
-    sem_init(&s, 0);
-    pipe_init(&p);
+    LATE = 0x00;
+    LATDbits.LATD0 = 0;
+    LATDbits.LATD2 = 0;
+
+
+
+    __asm("global _task_sensor, _task_display, _task_pwm, _one_shot_task");
+
+
+    mutex_init(&m_temp);
+    sem_init(&s_new_data, 0);
+    pipe_init(&p_temp);
+
+
+    pwm_init(1);
+    adc_init();
+    ext_int_init(0, 0);
 }
 
-TASK acionaMotor()
+
+
+
+
+
+
+TASK task_sensor(void)
 {
     while (1) {
-
+        uint16_t raw = adc_read(0);
+        uint8_t temp = (uint8_t)((raw * 125U) >> 8);
+        pipe_write(&p_temp, (char)temp);
+        os_delay(10);
     }
 }
 
-TASK ligaLed()
-{
-    while (1) {
-
-    }
-}
-
-TASK apagaLed()
-{
-    while (1) {
-
-    }
-}
-
-TASK LED_1()
-{
-    char acionamento[] = {'L', 'L', 'D', 'L', 'D', 'D'};
-    uint8_t pos = 0;
-    while (1) {
-        PORTCbits.RC6 = ~PORTCbits.RC6;
-        pipe_write(&p, acionamento[pos]);
-        pos = (pos + 1) % 6;
-
-    }
-}
-
-TASK LED_2()
-{
-    while (1) {
 
 
-        PORTCbits.RC7 = ~PORTCbits.RC7;
 
 
-    }
-}
 
-TASK LED_3()
+
+TASK task_display(void)
 {
     char dado;
     while (1) {
-        pipe_read(&p, &dado);
-        if (dado == 'L')
-            PORTDbits.RD0 = 1;
-        else if (dado == 'D')
-            PORTDbits.RD0 = 0;
+        pipe_read(&p_temp, &dado);
+        uint8_t t = (uint8_t)dado;
+
+        mutex_lock(&m_temp);
+        temp_global = t;
+        mutex_unlock(&m_temp);
 
 
+        LATEbits.LATE0 = (t < 25) ? 1 : 0;
+        LATEbits.LATE1 = (t >= 25 && t < 45) ? 1 : 0;
+        LATEbits.LATE2 = (t >= 45) ? 1 : 0;
+
+
+        if (t > 60) LATDbits.LATD0 = ~LATDbits.LATD0;
+        else LATDbits.LATD0 = 0;
+
+        sem_post(&s_new_data);
     }
+}
+# 117 "user.c"
+TASK task_pwm(void)
+{
+    while (1) {
+        sem_wait(&s_new_data);
+
+        mutex_lock(&m_temp);
+        uint8_t t = temp_global;
+        mutex_unlock(&m_temp);
+
+        uint16_t duty = (uint16_t)t * 13U;
+        if (duty > 1024U) duty = 1024U;
+        pwm_set_duty(1, duty);
+    }
+}
+
+
+
+
+
+TASK one_shot_task(void)
+{
+    os_delay(2);
+    LATDbits.LATD2 = ~LATDbits.LATD2;
+    os_task_exit();
 }

@@ -2,7 +2,7 @@
 
 // PWM via CCP1 + Timer2 no PIC18F46K22
 // Configuracao: PR2=0xFF, prescaler 1:1
-// Frequencia resultante: _XTAL_FREQ / (4 * 1 * (PR2+1)) = 16MHz / 1024 ~= 15.625 kHz
+// Frequencia resultante: _XTAL_FREQ / (4 * 1 * (PR2+1)) = 4MHz / 1024 ~= 3.906 kHz
 //
 // Timer2 nao interfere no Timer0 do scheduler: cada modulo possui registradores
 // proprios e independentes (T0CON vs T2CON, TMR0 vs TMR2, PR2 exclusivo do Timer2).
@@ -37,8 +37,8 @@ void pwm_set_duty(uint8_t channel, uint16_t duty)
 
 // ---------------------------------------------------------------------------
 // ADC via modulo ADC do PIC18F46K22
-// _XTAL_FREQ = 16 MHz → ADCS = Fosc/32 → T_AD = 2 µs (minimo exigido: 1 µs)
-// ACQT = 16 TAD → aquisicao automatica de 32 µs; sem __delay_us adicional necessario
+// _XTAL_FREQ = 4 MHz → ADCS = Fosc/32 → T_AD = 8 µs (minimo exigido: ~0.7 µs)
+// ACQT = 16 TAD → aquisicao automatica de 128 µs; sem __delay_us adicional necessario
 // Vref+ = VDD (~5 V), Vref- = VSS; resultado justificado a direita (10 bits)
 // ---------------------------------------------------------------------------
 

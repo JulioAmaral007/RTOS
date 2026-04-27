@@ -230,7 +230,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;mem.c: 168:   {
 {
 "169
-[; ;mem.c: 169:    *pHeap = count;
+[; ;mem.c: 169:    *pHeap = (unsigned char)count;
 [e = *U _pHeap -> _count `uc ]
 "170
 [; ;mem.c: 170:    *(pHeap + count) = 0;
@@ -319,7 +319,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;mem.c: 228:   pSegB += uSegB.byte;
 [e =+ _pSegB * -> -> . _uSegB 0 `i `x -> -> # *U _pSegB `i `x ]
 "229
-[; ;mem.c: 229:   (*pSegA).byte = pSegB - pSegA;
+[; ;mem.c: 229:   (*pSegA).byte = (unsigned char)(pSegB - pSegA);
 [e = . *U _pSegA 0 -> / - -> _pSegB `x -> _pSegA `x -> -> # *U _pSegB `i `x `uc ]
 "231
 [; ;mem.c: 231:   return (0x7F);

@@ -16,7 +16,7 @@ void scheduler()
   #elif DEFAULT_SCHEDULER == RR_PRIOR_SCHEDULER
     r_queue.pos_task_running = rr_prior_scheduler();
   #endif
-  r_queue.task_running = r_queue.TASKS[r_queue.pos_task_running];
+  r_queue.task_running = &r_queue.TASKS[r_queue.pos_task_running];
 }
 
 uint8_t RR_scheduler()
@@ -27,8 +27,8 @@ uint8_t RR_scheduler()
         prox = (prox+1) % r_queue.size;
         tentativas++;
         if (tentativas >= (MAX_USER_TASKS+1)) return 0;
-    } while (r_queue.TASKS[prox]->task_state != READY ||
-             r_queue.TASKS[prox]->task_ptr == idle);
+    } while (r_queue.TASKS[prox].task_state != READY ||
+             r_queue.TASKS[prox].task_ptr == idle);
 
     return prox;
 }
@@ -37,16 +37,16 @@ uint8_t priority_scheduler(void)
 {
     uint8_t prox = r_queue.pos_task_running;
 
-    while (r_queue.TASKS[prox]->task_state != READY)
+    while (r_queue.TASKS[prox].task_state != READY)
         prox = (prox + 1) % r_queue.size;
 
-    uint8_t current_task = r_queue.TASKS[prox]->task_priority;
+    uint8_t current_task = r_queue.TASKS[prox].task_priority;
 
     for (uint8_t i = 1; i < r_queue.size; i++) {
-        if (r_queue.TASKS[i]->task_state == READY &&
-            r_queue.TASKS[i]->task_priority > current_task) {
+        if (r_queue.TASKS[i].task_state == READY &&
+            r_queue.TASKS[i].task_priority > current_task) {
             prox = i;
-            current_task = r_queue.TASKS[i]->task_priority;
+            current_task = r_queue.TASKS[i].task_priority;
         }
     }
 
@@ -63,16 +63,16 @@ uint8_t rr_prior_scheduler(void)
     uint8_t highest_prio = 0;
 
     for (i = 0; i < r_queue.size; i++) {
-        if (r_queue.TASKS[i]->task_state == READY &&
-            r_queue.TASKS[i]->task_priority > highest_prio) {
-            highest_prio = r_queue.TASKS[i]->task_priority;
+        if (r_queue.TASKS[i].task_state == READY &&
+            r_queue.TASKS[i].task_priority > highest_prio) {
+            highest_prio = r_queue.TASKS[i].task_priority;
         }
     }
 
     for (i = 1; i <= r_queue.size; i++) {
         uint8_t idx = (r_queue.pos_task_running + i) % r_queue.size;
-        if (r_queue.TASKS[idx]->task_state == READY &&
-            r_queue.TASKS[idx]->task_priority == highest_prio) {
+        if (r_queue.TASKS[idx].task_state == READY &&
+            r_queue.TASKS[idx].task_priority == highest_prio) {
             return idx;
         }
     }

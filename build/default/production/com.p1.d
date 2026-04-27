@@ -3,4 +3,5 @@ com.c  \
 com.h  \
 types.h  \
 os_config.h  \
-sync.h 
+sync.h  \
+mem.h 

@@ -24,13 +24,13 @@ void setup_hardware(void)
 void __interrupt() ISR(void)
 {
     // INT0 — botao em RB0 (borda de descida, pull-up)
-    // Flag limpa ANTES de qualquer processamento: evita re-disparo se a borda
-    // demorar a cair. one_shot_pending protege contra criacao multipla por rebote.
+    // Guarda: cria a one-shot somente se ha slot livre na fila.
+    // Usa r_queue.size como unica fonte de verdade — elimina o risco de flag
+    // one_shot_pending ficar preso em 1 se os_create_task falhar silenciosamente.
     if (INTCONbits.INT0IF) {
         INTCONbits.INT0IF = 0;
-        if (!one_shot_pending) {
-            one_shot_pending = 1;
-            os_create_task(5, one_shot_task, 6); // id=5, prior=6 (maior que as tasks estaticas)
+        if (r_queue.size < MAX_USER_TASKS + 1) {
+            os_create_task(5, one_shot_task, 6);
         }
     }
 
@@ -39,10 +39,10 @@ void __interrupt() ISR(void)
         
         // Verifica se tem tarefa com delay > 0
         for (int i = 0; i < r_queue.size; i++) {
-            if (r_queue.TASKS[i]->task_delay > 0) {
-                r_queue.TASKS[i]->task_delay--;
-                if (r_queue.TASKS[i]->task_delay == 0) {
-                    r_queue.TASKS[i]->task_state = READY;
+            if (r_queue.TASKS[i].task_delay > 0) {
+                r_queue.TASKS[i].task_delay--;
+                if (r_queue.TASKS[i].task_delay == 0) {
+                    r_queue.TASKS[i].task_state = READY;
                 }
             }
         }

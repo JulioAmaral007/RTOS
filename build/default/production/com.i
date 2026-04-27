@@ -129,7 +129,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -177,7 +178,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -194,7 +195,7 @@ typedef struct ready_queue {
 
 typedef struct sem {
     int contador;
-    uint8_t fila[3];
+    uint8_t fila[4];
     uint8_t pos_input;
     uint8_t pos_output;
 } sem_t;
@@ -203,11 +204,24 @@ typedef struct sem {
 void sem_init(sem_t *sem, uint8_t valor);
 void sem_wait(sem_t *sem);
 void sem_post(sem_t *sem);
+# 28 "./sync.h"
+typedef struct {
+    uint8_t locked;
+    uint8_t owner_pos;
+    uint8_t fila[4];
+    uint8_t pos_input;
+    uint8_t pos_output;
+} mutex_t;
+
+void mutex_init(mutex_t *m);
+void mutex_lock(mutex_t *m);
+void mutex_unlock(mutex_t *m);
 # 7 "./com.h" 2
 
 
 typedef struct pipe {
-    char fila_dados[4];
+    char *fila_dados;
+    uint8_t capacity;
     uint8_t pos_input;
     uint8_t pos_output;
     sem_t s_input;
@@ -215,23 +229,83 @@ typedef struct pipe {
 } pipe_t;
 
 void pipe_init(pipe_t *p);
+void pipe_destroy(pipe_t *p);
 void pipe_read(pipe_t *p, char *dado);
 void pipe_write(pipe_t *p, char dado);
 # 2 "com.c" 2
+# 1 "./mem.h" 1
+# 118 "./mem.h"
+typedef union _SALLOC
+{
+ unsigned char byte;
+ struct _BITS
+ {
+  unsigned count:7;
+  unsigned alloc:1;
+ }bits;
+}SALLOC;
+
+
+
+
+
+
+
+
+#pragma udata _SRAM_ALLOC_HEAP
+unsigned char _uDynamicHeap[0x200];
+
+
+
+
+
+#pragma udata _SRAM_ALLOC
+
+
+
+
+
+
+     unsigned char _SRAMmerge(SALLOC * pSegA);
+unsigned char * SRAMalloc( unsigned char nBytes);
+void SRAMfree(unsigned char * pSRAM);
+void SRAMInitHeap(void);
+# 3 "com.c" 2
+# 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stddef.h" 1 3
+# 19 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stddef.h" 3
+# 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 1 3
+# 24 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef long int wchar_t;
+# 128 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef unsigned size_t;
+# 138 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef int ptrdiff_t;
+# 20 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stddef.h" 2 3
+# 4 "com.c" 2
 
 void pipe_init(pipe_t *p)
 {
+    p->fila_dados = (char *) SRAMalloc(4);
+    if (p->fila_dados == ((void*)0)) return;
+    p->capacity = 4;
     p->pos_input = 0;
     p->pos_output = 0;
     sem_init(&p->s_input, 4);
     sem_init(&p->s_output, 0);
 }
 
+void pipe_destroy(pipe_t *p)
+{
+    SRAMfree((unsigned char *) p->fila_dados);
+    p->fila_dados = ((void*)0);
+    p->capacity = 0;
+}
+
 void pipe_write(pipe_t *p, char dado)
 {
     sem_wait(&p->s_input);
     p->fila_dados[p->pos_input] = dado;
-    p->pos_input = (p->pos_input + 1) % 4;
+    p->pos_input = (p->pos_input + 1) % p->capacity;
     sem_post(&p->s_output);
 }
 
@@ -239,6 +313,6 @@ void pipe_read(pipe_t *p, char *dado)
 {
     sem_wait(&p->s_output);
     *dado = p->fila_dados[p->pos_output];
-    p->pos_output = (p->pos_output + 1) % 4;
+    p->pos_output = (p->pos_output + 1) % p->capacity;
     sem_post(&p->s_input);
 }

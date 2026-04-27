@@ -123,7 +123,7 @@ typedef uint32_t uint_fast32_t;
 
 typedef struct sem {
     int contador;
-    uint8_t fila[3];
+    uint8_t fila[4];
     uint8_t pos_input;
     uint8_t pos_output;
 } sem_t;
@@ -132,6 +132,18 @@ typedef struct sem {
 void sem_init(sem_t *sem, uint8_t valor);
 void sem_wait(sem_t *sem);
 void sem_post(sem_t *sem);
+# 28 "./sync.h"
+typedef struct {
+    uint8_t locked;
+    uint8_t owner_pos;
+    uint8_t fila[4];
+    uint8_t pos_input;
+    uint8_t pos_output;
+} mutex_t;
+
+void mutex_init(mutex_t *m);
+void mutex_lock(mutex_t *m);
+void mutex_unlock(mutex_t *m);
 # 2 "sync.c" 2
 # 1 "./kernel.h" 1
 
@@ -149,7 +161,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -197,7 +210,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -9935,6 +9948,7 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 # 3 "sync.c" 2
@@ -9947,6 +9961,7 @@ TASK idle();
 void scheduler(void);
 uint8_t RR_scheduler(void);
 uint8_t priority_scheduler(void);
+uint8_t rr_prior_scheduler(void);
 # 4 "sync.c" 2
 
 
@@ -9967,7 +9982,7 @@ void sem_wait(sem_t *sem)
     sem->contador--;
     if (sem->contador < 0) {
         sem->fila[sem->pos_input] = r_queue.pos_task_running;
-        sem->pos_input = (sem->pos_input + 1) % 3;
+        sem->pos_input = (sem->pos_input + 1) % 4;
 
         do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_SEM; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
         scheduler();
@@ -9985,7 +10000,67 @@ void sem_post(sem_t *sem)
     if (sem->contador <= 0) {
 
         r_queue.TASKS[sem->fila[sem->pos_output]].task_state = READY;
-        sem->pos_output = (sem->pos_output + 1) % 3;
+        sem->pos_output = (sem->pos_output + 1) % 4;
+    }
+
+    INTCONbits.GIE = 1;;
+}
+
+
+
+
+
+void mutex_init(mutex_t *m)
+{
+    m->locked = 0;
+    m->owner_pos = 0xFF;
+    m->pos_input = 0;
+    m->pos_output = 0;
+}
+
+void mutex_lock(mutex_t *m)
+{
+    INTCONbits.GIE = 0;;
+
+    if (m->locked == 0) {
+
+        m->locked = 1;
+        m->owner_pos = r_queue.pos_task_running;
+    } else if (m->owner_pos == r_queue.pos_task_running) {
+
+    } else {
+
+        m->fila[m->pos_input] = r_queue.pos_task_running;
+        m->pos_input = (m->pos_input + 1) % 4;
+        do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_MUTEX; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
+        scheduler();
+        do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
+
+    }
+
+    INTCONbits.GIE = 1;;
+}
+
+void mutex_unlock(mutex_t *m)
+{
+    INTCONbits.GIE = 0;;
+
+
+    if (m->owner_pos != r_queue.pos_task_running) {
+        INTCONbits.GIE = 1;;
+        return;
+    }
+
+    if (m->pos_input != m->pos_output) {
+
+        m->owner_pos = m->fila[m->pos_output];
+        m->pos_output = (m->pos_output + 1) % 4;
+        r_queue.TASKS[m->owner_pos].task_state = READY;
+
+    } else {
+
+        m->locked = 0;
+        m->owner_pos = 0xFF;
     }
 
     INTCONbits.GIE = 1;;

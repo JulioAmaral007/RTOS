@@ -121,6 +121,7 @@ typedef uint32_t uint_fast32_t;
 void scheduler(void);
 uint8_t RR_scheduler(void);
 uint8_t priority_scheduler(void);
+uint8_t rr_prior_scheduler(void);
 # 2 "scheduler.c" 2
 # 1 "./types.h" 1
 
@@ -135,7 +136,8 @@ typedef void TASK;
 typedef enum {READY = 0,
               WAITING,
               RUNNING,
-              WAITING_SEM
+              WAITING_SEM,
+              WAITING_MUTEX
              } state_t;
 
 typedef void (*f_ptr)(void);
@@ -183,7 +185,7 @@ typedef struct tcb {
 
 
 typedef struct ready_queue {
-    tcb_t TASKS[3 +1];
+    tcb_t TASKS[4 +1];
     uint8_t size;
     tcb_t *task_running;
     uint8_t pos_task_running;
@@ -9926,9 +9928,11 @@ void os_yield(void);
 void os_config(void);
 void os_start(void);
 void os_task_change_state(state_t new_state, tcb_t *task_handle);
+void os_task_exit(void);
 
 TASK idle();
 # 4 "scheduler.c" 2
+
 
 
 extern ready_queue_t r_queue;
@@ -9936,7 +9940,13 @@ extern ready_queue_t r_queue;
 
 void scheduler()
 {
-  r_queue.pos_task_running = RR_scheduler();
+
+
+
+
+
+    r_queue.pos_task_running = rr_prior_scheduler();
+
   r_queue.task_running = &r_queue.TASKS[r_queue.pos_task_running];
 }
 
@@ -9947,7 +9957,7 @@ uint8_t RR_scheduler()
     do {
         prox = (prox+1) % r_queue.size;
         tentativas++;
-        if (tentativas >= (3 +1)) return 0;
+        if (tentativas >= (4 +1)) return 0;
     } while (r_queue.TASKS[prox].task_state != READY ||
              r_queue.TASKS[prox].task_ptr == idle);
 
@@ -9958,7 +9968,45 @@ uint8_t priority_scheduler(void)
 {
     uint8_t prox = r_queue.pos_task_running;
 
+    while (r_queue.TASKS[prox].task_state != READY)
+        prox = (prox + 1) % r_queue.size;
 
+    uint8_t current_task = r_queue.TASKS[prox].task_priority;
+
+    for (uint8_t i = 1; i < r_queue.size; i++) {
+        if (r_queue.TASKS[i].task_state == READY &&
+            r_queue.TASKS[i].task_priority > current_task) {
+            prox = i;
+            current_task = r_queue.TASKS[i].task_priority;
+        }
+    }
 
     return prox;
+}
+
+
+
+
+
+uint8_t rr_prior_scheduler(void)
+{
+    uint8_t i;
+    uint8_t highest_prio = 0;
+
+    for (i = 0; i < r_queue.size; i++) {
+        if (r_queue.TASKS[i].task_state == READY &&
+            r_queue.TASKS[i].task_priority > highest_prio) {
+            highest_prio = r_queue.TASKS[i].task_priority;
+        }
+    }
+
+    for (i = 1; i <= r_queue.size; i++) {
+        uint8_t idx = (r_queue.pos_task_running + i) % r_queue.size;
+        if (r_queue.TASKS[idx].task_state == READY &&
+            r_queue.TASKS[idx].task_priority == highest_prio) {
+            return idx;
+        }
+    }
+
+    return 0;
 }
