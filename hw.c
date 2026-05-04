@@ -16,7 +16,7 @@ void setup_hardware(void)
     T0CONbits.T08BIT    = 1; // 8 bits
     T0CONbits.T0CS      = 0; // Instru��o interna
     T0CONbits.PSA       = 0; // Ativa preescaler
-    T0CONbits.T0PS      = 0b111; // 1:256
+    T0CONbits.T0PS      = 0b101; // 1:64
     T0CONbits.TMR0ON    = 1; // Ativa timer
     TMR0                = 0;
 }
