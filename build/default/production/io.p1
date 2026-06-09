@@ -969,198 +969,159 @@ Version 4.0 HI-TECH Software Intermediate Code
 "17404
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 17404: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"12 io.c
-[; ;io.c: 12: void pwm_init(uint8_t channel)
-[v _pwm_init `(v ~T0 @X0 1 ef1`uc ]
-"13
-[; ;io.c: 13: {
+"4 io.c
+[; ;io.c: 4: void pwm_init(void)
+[v _pwm_init `(v ~T0 @X0 1 ef ]
+"5
+[; ;io.c: 5: {
 {
 [e :U _pwm_init ]
-"12
-[; ;io.c: 12: void pwm_init(uint8_t channel)
-[v _channel `uc ~T0 @X0 1 r1 ]
-"13
-[; ;io.c: 13: {
 [f ]
-"14
-[; ;io.c: 14:     if (channel != 1)
-[e $ ! != -> _channel `i -> 1 `i 877  ]
-"15
-[; ;io.c: 15:         return;
-[e $UE 876  ]
-[e :U 877 ]
-"17
-[; ;io.c: 17:     TRISCbits.TRISC2 = 0;
+"6
+[; ;io.c: 6:     TRISCbits.TRISC2 = 0;
 [e = . . _TRISCbits 0 2 -> -> 0 `i `uc ]
-"18
-[; ;io.c: 18:     CCP1CON = 0b00001100;
+"7
+[; ;io.c: 7:     CCP1CON = 0b00001100;
 [e = _CCP1CON -> -> 12 `i `uc ]
-"19
-[; ;io.c: 19:     T2CON = 0b00000100;
+"8
+[; ;io.c: 8:     T2CON = 0b00000100;
 [e = _T2CON -> -> 4 `i `uc ]
-"20
-[; ;io.c: 20:     PR2 = 0xFF;
+"9
+[; ;io.c: 9:     PR2 = 0xFF;
 [e = _PR2 -> -> 255 `i `uc ]
-"21
-[; ;io.c: 21:     CCPR1L = 0;
+"10
+[; ;io.c: 10:     CCPR1L = 0;
 [e = _CCPR1L -> -> 0 `i `uc ]
-"22
-[; ;io.c: 22:     CCP1CONbits.DC1B = 0;
+"11
+[; ;io.c: 11:     CCP1CONbits.DC1B = 0;
 [e = . . _CCP1CONbits 0 1 -> -> 0 `i `uc ]
-"23
-[; ;io.c: 23: }
+"12
+[; ;io.c: 12: }
 [e :UE 876 ]
 }
-"25
-[; ;io.c: 25: void pwm_set_duty(uint8_t channel, uint16_t duty)
-[v _pwm_set_duty `(v ~T0 @X0 1 ef2`uc`us ]
-"26
-[; ;io.c: 26: {
+"14
+[; ;io.c: 14: void pwm_set_duty(uint16_t duty)
+[v _pwm_set_duty `(v ~T0 @X0 1 ef1`us ]
+"15
+[; ;io.c: 15: {
 {
 [e :U _pwm_set_duty ]
-"25
-[; ;io.c: 25: void pwm_set_duty(uint8_t channel, uint16_t duty)
-[v _channel `uc ~T0 @X0 1 r1 ]
-[v _duty `us ~T0 @X0 1 r2 ]
-"26
-[; ;io.c: 26: {
+"14
+[; ;io.c: 14: void pwm_set_duty(uint16_t duty)
+[v _duty `us ~T0 @X0 1 r1 ]
+"15
+[; ;io.c: 15: {
 [f ]
-"27
-[; ;io.c: 27:     if (channel != 1)
-[e $ ! != -> _channel `i -> 1 `i 879  ]
-"28
-[; ;io.c: 28:         return;
-[e $UE 878  ]
-[e :U 879 ]
-"30
-[; ;io.c: 30:     uint16_t duty_max = (uint16_t)((PR2 + 1) * 4);
+"16
+[; ;io.c: 16:     uint16_t duty_max = (uint16_t)((PR2 + 1) * 4);
 [v _duty_max `us ~T0 @X0 1 a ]
 [e = _duty_max -> * + -> _PR2 `i -> 1 `i -> 4 `i `us ]
-"31
-[; ;io.c: 31:     if (duty > duty_max)
-[e $ ! > -> _duty `ui -> _duty_max `ui 880  ]
-"32
-[; ;io.c: 32:         duty = duty_max;
+"17
+[; ;io.c: 17:     if (duty > duty_max)
+[e $ ! > -> _duty `ui -> _duty_max `ui 878  ]
+"18
+[; ;io.c: 18:         duty = duty_max;
 [e = _duty _duty_max ]
-[e :U 880 ]
-"34
-[; ;io.c: 34:     CCPR1L = (uint8_t)(duty >> 2);
+[e :U 878 ]
+"20
+[; ;io.c: 20:     CCPR1L = (uint8_t)(duty >> 2);
 [e = _CCPR1L -> >> -> _duty `ui -> 2 `i `uc ]
-"35
-[; ;io.c: 35:     CCP1CONbits.DC1B = (uint8_t)(duty & 0x03);
+"21
+[; ;io.c: 21:     CCP1CONbits.DC1B = (uint8_t)(duty & 0b11);
 [e = . . _CCP1CONbits 0 1 -> & -> _duty `ui -> -> 3 `i `ui `uc ]
-"36
-[; ;io.c: 36: }
-[e :UE 878 ]
+"22
+[; ;io.c: 22: }
+[e :UE 877 ]
 }
-"45
-[; ;io.c: 45: void adc_init(void)
+"28
+[; ;io.c: 28: void adc_init(void)
 [v _adc_init `(v ~T0 @X0 1 ef ]
-"46
-[; ;io.c: 46: {
+"29
+[; ;io.c: 29: {
 {
 [e :U _adc_init ]
 [f ]
-"47
-[; ;io.c: 47:     TRISAbits.RA0 = 1;
+"30
+[; ;io.c: 30:     TRISAbits.RA0 = 1;
 [e = . . _TRISAbits 1 0 -> -> 1 `i `uc ]
-"48
-[; ;io.c: 48:     ANSELAbits.ANSA0 = 1;
+"31
+[; ;io.c: 31:     ANSELAbits.ANSA0 = 1;
 [e = . . _ANSELAbits 0 0 -> -> 1 `i `uc ]
-"50
-[; ;io.c: 50:     ADCON1bits.PVCFG = 0b00;
+"33
+[; ;io.c: 33:     ADCON1bits.PVCFG = 0b00;
 [e = . . _ADCON1bits 0 1 -> -> 0 `i `uc ]
-"51
-[; ;io.c: 51:     ADCON1bits.NVCFG = 0b00;
+"34
+[; ;io.c: 34:     ADCON1bits.NVCFG = 0b00;
 [e = . . _ADCON1bits 0 0 -> -> 0 `i `uc ]
-"53
-[; ;io.c: 53:     ADCON2bits.ADFM = 1;
+"36
+[; ;io.c: 36:     ADCON2bits.ADFM = 1;
 [e = . . _ADCON2bits 0 3 -> -> 1 `i `uc ]
-"54
-[; ;io.c: 54:     ADCON2bits.ACQT = 0b110;
+"37
+[; ;io.c: 37:     ADCON2bits.ACQT = 0b110;
 [e = . . _ADCON2bits 0 1 -> -> 6 `i `uc ]
-"55
-[; ;io.c: 55:     ADCON2bits.ADCS = 0b010;
-[e = . . _ADCON2bits 0 0 -> -> 2 `i `uc ]
-"57
-[; ;io.c: 57:     ADCON0bits.ADON = 1;
+"38
+[; ;io.c: 38:     ADCON2bits.ADCS = 0b100;
+[e = . . _ADCON2bits 0 0 -> -> 4 `i `uc ]
+"40
+[; ;io.c: 40:     ADCON0bits.CHS = 0b00000;
+[e = . . _ADCON0bits 1 2 -> -> 0 `i `uc ]
+"41
+[; ;io.c: 41:     ADCON0bits.ADON = 1;
 [e = . . _ADCON0bits 1 0 -> -> 1 `i `uc ]
-"58
-[; ;io.c: 58: }
-[e :UE 881 ]
+"42
+[; ;io.c: 42: }
+[e :UE 879 ]
 }
-"60
-[; ;io.c: 60: uint16_t adc_read(uint8_t channel)
-[v _adc_read `(us ~T0 @X0 1 ef1`uc ]
-"61
-[; ;io.c: 61: {
+"44
+[; ;io.c: 44: uint16_t adc_read(void)
+[v _adc_read `(us ~T0 @X0 1 ef ]
+"45
+[; ;io.c: 45: {
 {
 [e :U _adc_read ]
-"60
-[; ;io.c: 60: uint16_t adc_read(uint8_t channel)
-[v _channel `uc ~T0 @X0 1 r1 ]
-"61
-[; ;io.c: 61: {
 [f ]
-"62
-[; ;io.c: 62:     ADCON0bits.CHS = channel;
-[e = . . _ADCON0bits 1 2 _channel ]
-"63
-[; ;io.c: 63:     ADCON0bits.GO = 1;
+"46
+[; ;io.c: 46:     ADCON0bits.GO = 1;
 [e = . . _ADCON0bits 2 1 -> -> 1 `i `uc ]
-"64
-[; ;io.c: 64:     while (ADCON0bits.GO);
-[e $U 883  ]
-[e :U 884 ]
+"47
+[; ;io.c: 47:     while (ADCON0bits.GO);
+[e $U 881  ]
+[e :U 882 ]
+[e :U 881 ]
+[e $ != -> . . _ADCON0bits 2 1 `i -> 0 `i 882  ]
 [e :U 883 ]
-[e $ != -> . . _ADCON0bits 2 1 `i -> 0 `i 884  ]
-[e :U 885 ]
-"65
-[; ;io.c: 65:     return (uint16_t)((ADRESH << 8) | ADRESL);
+"48
+[; ;io.c: 48:     return (uint16_t)((ADRESH << 8) | ADRESL);
 [e ) -> | << -> _ADRESH `i -> 8 `i -> _ADRESL `i `us ]
-[e $UE 882  ]
-"66
-[; ;io.c: 66: }
-[e :UE 882 ]
+[e $UE 880  ]
+"49
+[; ;io.c: 49: }
+[e :UE 880 ]
 }
-"75
-[; ;io.c: 75: void ext_int_init(uint8_t int_pin, uint8_t edge)
-[v _ext_int_init `(v ~T0 @X0 1 ef2`uc`uc ]
-"76
-[; ;io.c: 76: {
+"55
+[; ;io.c: 55: void ext_int_init(void)
+[v _ext_int_init `(v ~T0 @X0 1 ef ]
+"56
+[; ;io.c: 56: {
 {
 [e :U _ext_int_init ]
-"75
-[; ;io.c: 75: void ext_int_init(uint8_t int_pin, uint8_t edge)
-[v _int_pin `uc ~T0 @X0 1 r1 ]
-[v _edge `uc ~T0 @X0 1 r2 ]
-"76
-[; ;io.c: 76: {
 [f ]
-"77
-[; ;io.c: 77:     if (int_pin == 0) {
-[e $ ! == -> _int_pin `i -> 0 `i 887  ]
-{
-"78
-[; ;io.c: 78:         TRISBbits.TRISB0 = 1;
+"57
+[; ;io.c: 57:     TRISBbits.TRISB0 = 1;
 [e = . . _TRISBbits 0 0 -> -> 1 `i `uc ]
-"79
-[; ;io.c: 79:         ANSELBbits.ANSB0 = 0;
+"58
+[; ;io.c: 58:     ANSELBbits.ANSB0 = 0;
 [e = . . _ANSELBbits 0 0 -> -> 0 `i `uc ]
-"80
-[; ;io.c: 80:         INTCON2bits.INTEDG0 = edge;
-[e = . . _INTCON2bits 1 6 _edge ]
-"81
-[; ;io.c: 81:         INTCONbits.INT0IF = 0;
+"59
+[; ;io.c: 59:     INTCON2bits.INTEDG0 = 0;
+[e = . . _INTCON2bits 1 6 -> -> 0 `i `uc ]
+"60
+[; ;io.c: 60:     INTCONbits.INT0IF = 0;
 [e = . . _INTCONbits 0 1 -> -> 0 `i `uc ]
-"82
-[; ;io.c: 82:         INTCONbits.INT0IE = 1;
+"61
+[; ;io.c: 61:     INTCONbits.INT0IE = 1;
 [e = . . _INTCONbits 0 4 -> -> 1 `i `uc ]
-"83
-[; ;io.c: 83:     }
-}
-[e :U 887 ]
-"85
-[; ;io.c: 85: }
-[e :UE 886 ]
+"62
+[; ;io.c: 62: }
+[e :UE 884 ]
 }

@@ -133,20 +133,23 @@ uint8_t rr_prior_scheduler(void);
 
 typedef void TASK;
 
-typedef enum {READY = 0,
-              WAITING,
-              RUNNING,
-              WAITING_SEM,
-              WAITING_MUTEX
-             } state_t;
+typedef enum {
+    READY = 0,
+    WAITING,
+    RUNNING,
+    WAITING_SEM,
+    WAITING_MUTEX
+} state_t;
 
 typedef void (*f_ptr)(void);
+
 
 typedef struct hw_stack {
     uint8_t TOSL_REG;
     uint8_t TOSH_REG;
     uint8_t TOSU_REG;
 } hw_stack_t;
+
 
 typedef struct sw_stack {
     hw_stack_t stack[31];
@@ -156,10 +159,10 @@ typedef struct sw_stack {
 typedef struct tcb {
     uint8_t task_id;
     state_t task_state;
-
     f_ptr task_ptr;
     uint8_t task_delay;
     uint8_t task_priority;
+
 
     uint8_t W_REG;
     uint8_t STATUS_REG;

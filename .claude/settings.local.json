@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git reset *)"
+      "Bash(make clean *)",
+      "Bash(make build *)",
+      "Bash(make -f nbproject/Makefile-default.mk dist/default/debug/RTOS.debug.elf)",
+      "Bash(make -f nbproject/Makefile-default.mk SUBPROJECTS= .build-conf CONF=default)"
     ]
   }
 }

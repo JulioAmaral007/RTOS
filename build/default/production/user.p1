@@ -7,8 +7,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;./sync.h: 8: typedef struct sem {
 [s S880 `i 1 `uc -> 4 `i `uc 1 `uc 1 ]
 [n S880 sem contador fila pos_input pos_output ]
-"9 ./com.h
-[; ;./com.h: 9: typedef struct pipe {
+"7 ./com.h
+[; ;./com.h: 7: typedef struct pipe {
 [s S882 `*uc 1 `uc 1 `uc 1 `uc 1 `S880 1 `S880 1 ]
 [n S882 pipe fila_dados capacity pos_input pos_output s_input s_output ]
 "8957 C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h
@@ -87,29 +87,29 @@ Version 4.0 HI-TECH Software Intermediate Code
 "16
 [; ;./sync.h: 16: void sem_init(sem_t *sem, uint8_t valor);
 [v _sem_init `(v ~T0 @X0 0 ef2`*S880`uc ]
-"18 ./com.h
-[; ;./com.h: 18: void pipe_init(pipe_t *p);
+"16 ./com.h
+[; ;./com.h: 16: void pipe_init(pipe_t *p);
 [v _pipe_init `(v ~T0 @X0 0 ef1`*S882 ]
 "8 ./io.h
-[; ;./io.h: 8: void pwm_init(uint8_t channel);
-[v _pwm_init `(v ~T0 @X0 0 ef1`uc ]
+[; ;./io.h: 8: void pwm_init(void);
+[v _pwm_init `(v ~T0 @X0 0 ef ]
 "12
 [; ;./io.h: 12: void adc_init(void);
 [v _adc_init `(v ~T0 @X0 0 ef ]
 "16
-[; ;./io.h: 16: void ext_int_init(uint8_t int_pin, uint8_t edge);
-[v _ext_int_init `(v ~T0 @X0 0 ef2`uc`uc ]
-"13
-[; ;./io.h: 13: uint16_t adc_read(uint8_t channel);
-[v _adc_read `(us ~T0 @X0 0 ef1`uc ]
-"21 ./com.h
-[; ;./com.h: 21: void pipe_write(pipe_t *p, char dado);
-[v _pipe_write `(v ~T0 @X0 0 ef2`*S882`uc ]
+[; ;./io.h: 16: void ext_int_init(void);
+[v _ext_int_init `(v ~T0 @X0 0 ef ]
 "15 ./kernel.h
 [; ;./kernel.h: 15: void os_delay(uint8_t time);
 [v _os_delay `(v ~T0 @X0 0 ef1`uc ]
-"20 ./com.h
-[; ;./com.h: 20: void pipe_read(pipe_t *p, char *dado);
+"13 ./io.h
+[; ;./io.h: 13: uint16_t adc_read(void);
+[v _adc_read `(us ~T0 @X0 0 ef ]
+"19 ./com.h
+[; ;./com.h: 19: void pipe_write(pipe_t *p, char dado);
+[v _pipe_write `(v ~T0 @X0 0 ef2`*S882`uc ]
+"18
+[; ;./com.h: 18: void pipe_read(pipe_t *p, char *dado);
 [v _pipe_read `(v ~T0 @X0 0 ef2`*S882`*uc ]
 "37 ./sync.h
 [; ;./sync.h: 37: void mutex_lock(mutex_t *m);
@@ -139,8 +139,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;./sync.h: 17: void sem_wait(sem_t *sem);
 [v _sem_wait `(v ~T0 @X0 0 ef1`*S880 ]
 "9 ./io.h
-[; ;./io.h: 9: void pwm_set_duty(uint8_t channel, uint16_t duty);
-[v _pwm_set_duty `(v ~T0 @X0 0 ef2`uc`us ]
+[; ;./io.h: 9: void pwm_set_duty(uint16_t duty);
+[v _pwm_set_duty `(v ~T0 @X0 0 ef1`us ]
 "21 ./kernel.h
 [; ;./kernel.h: 21: void os_task_exit(void);
 [v _os_task_exit `(v ~T0 @X0 0 ef ]
@@ -909,251 +909,232 @@ Version 4.0 HI-TECH Software Intermediate Code
 [i _temp_global
 -> -> 0 `i `uc
 ]
-"12
-[; ;user.c: 12: static mutex_t m_temp;
+"10
+[; ;user.c: 10: static mutex_t m_temp;
 [v _m_temp `S881 ~T0 @X0 1 s ]
-"15
-[; ;user.c: 15: static sem_t s_new_data;
+"11
+[; ;user.c: 11: static sem_t s_new_data;
 [v _s_new_data `S880 ~T0 @X0 1 s ]
-"18
-[; ;user.c: 18: static pipe_t p_temp;
+"14
+[; ;user.c: 14: static pipe_t p_temp;
 [v _p_temp `S882 ~T0 @X0 1 s ]
-"28
-[; ;user.c: 28: void config_user(void)
+"22
+[; ;user.c: 22: void config_user(void)
 [v _config_user `(v ~T0 @X0 1 ef ]
-"29
-[; ;user.c: 29: {
+"23
+[; ;user.c: 23: {
 {
 [e :U _config_user ]
 [f ]
-"31
-[; ;user.c: 31:     TRISEbits.RE0 = 0;
+"25
+[; ;user.c: 25:     TRISEbits.RE0 = 0;
 [e = . . _TRISEbits 1 0 -> -> 0 `i `uc ]
-"32
-[; ;user.c: 32:     ANSELEbits.ANSE0 = 0;
+"26
+[; ;user.c: 26:     ANSELEbits.ANSE0 = 0;
 [e = . . _ANSELEbits 0 0 -> -> 0 `i `uc ]
-"33
-[; ;user.c: 33:     TRISEbits.RE1 = 0;
+"27
+[; ;user.c: 27:     TRISEbits.RE1 = 0;
 [e = . . _TRISEbits 1 1 -> -> 0 `i `uc ]
-"34
-[; ;user.c: 34:     ANSELEbits.ANSE1 = 0;
+"28
+[; ;user.c: 28:     ANSELEbits.ANSE1 = 0;
 [e = . . _ANSELEbits 0 1 -> -> 0 `i `uc ]
-"35
-[; ;user.c: 35:     TRISEbits.RE2 = 0;
+"29
+[; ;user.c: 29:     TRISEbits.RE2 = 0;
 [e = . . _TRISEbits 1 2 -> -> 0 `i `uc ]
-"36
-[; ;user.c: 36:     ANSELEbits.ANSE2 = 0;
+"30
+[; ;user.c: 30:     ANSELEbits.ANSE2 = 0;
 [e = . . _ANSELEbits 0 2 -> -> 0 `i `uc ]
-"39
-[; ;user.c: 39:     TRISDbits.RD0 = 0;
-[e = . . _TRISDbits 1 0 -> -> 0 `i `uc ]
-"40
-[; ;user.c: 40:     ANSELDbits.ANSD0 = 0;
-[e = . . _ANSELDbits 0 0 -> -> 0 `i `uc ]
-"41
-[; ;user.c: 41:     TRISDbits.RD2 = 0;
+"33
+[; ;user.c: 33:     TRISDbits.RD2 = 0;
 [e = . . _TRISDbits 1 2 -> -> 0 `i `uc ]
-"42
-[; ;user.c: 42:     ANSELDbits.ANSD2 = 0;
+"34
+[; ;user.c: 34:     ANSELDbits.ANSD2 = 0;
 [e = . . _ANSELDbits 0 2 -> -> 0 `i `uc ]
-"45
-[; ;user.c: 45:     LATE = 0x00;
+"36
+[; ;user.c: 36:     LATE = 0x00;
 [e = _LATE -> -> 0 `i `uc ]
-"46
-[; ;user.c: 46:     LATDbits.LATD0 = 0;
-[e = . . _LATDbits 0 0 -> -> 0 `i `uc ]
-"47
-[; ;user.c: 47:     LATDbits.LATD2 = 0;
+"37
+[; ;user.c: 37:     LATDbits.LATD2 = 0;
 [e = . . _LATDbits 0 2 -> -> 0 `i `uc ]
-"51
-[; ;user.c: 51:     __asm("global _task_sensor, _task_display, _task_pwm, _one_shot_task");
+"41
+[; ;user.c: 41:     __asm("global _task_sensor, _task_display, _task_pwm, _one_shot_task");
 [; <" global _task_sensor, _task_display, _task_pwm, _one_shot_task ;# ">
-"54
-[; ;user.c: 54:     mutex_init(&m_temp);
+"43
+[; ;user.c: 43:     mutex_init(&m_temp);
 [e ( _mutex_init (1 &U _m_temp ]
-"55
-[; ;user.c: 55:     sem_init(&s_new_data, 0);
+"44
+[; ;user.c: 44:     sem_init(&s_new_data, 0);
 [e ( _sem_init (2 , &U _s_new_data -> -> 0 `i `uc ]
-"56
-[; ;user.c: 56:     pipe_init(&p_temp);
+"45
+[; ;user.c: 45:     pipe_init(&p_temp);
 [e ( _pipe_init (1 &U _p_temp ]
-"59
-[; ;user.c: 59:     pwm_init(1);
-[e ( _pwm_init (1 -> -> 1 `i `uc ]
-"60
-[; ;user.c: 60:     adc_init();
+"48
+[; ;user.c: 48:     pwm_init();
+[e ( _pwm_init ..  ]
+"49
+[; ;user.c: 49:     adc_init();
 [e ( _adc_init ..  ]
-"61
-[; ;user.c: 61:     ext_int_init(0, 0);
-[e ( _ext_int_init (2 , -> -> 0 `i `uc -> -> 0 `i `uc ]
-"62
-[; ;user.c: 62: }
+"50
+[; ;user.c: 50:     ext_int_init();
+[e ( _ext_int_init ..  ]
+"51
+[; ;user.c: 51: }
 [e :UE 883 ]
 }
-"70
-[; ;user.c: 70: TASK task_sensor(void)
+"59
+[; ;user.c: 59: TASK task_sensor(void)
 [v _task_sensor `(v ~T0 @X0 1 ef ]
-"71
-[; ;user.c: 71: {
+"60
+[; ;user.c: 60: {
 {
 [e :U _task_sensor ]
 [f ]
-"72
-[; ;user.c: 72:     while (1) {
+"61
+[; ;user.c: 61:     os_delay(15);
+[e ( _os_delay (1 -> -> 15 `i `uc ]
+"62
+[; ;user.c: 62:     while (1) {
 [e :U 886 ]
 {
-"73
-[; ;user.c: 73:         uint16_t raw = adc_read(0);
+"63
+[; ;user.c: 63:         uint16_t raw = adc_read();
 [v _raw `us ~T0 @X0 1 a ]
-[e = _raw ( _adc_read (1 -> -> 0 `i `uc ]
-"74
-[; ;user.c: 74:         uint8_t temp = (uint8_t)((raw * 125U) >> 8);
+[e = _raw ( _adc_read ..  ]
+"64
+[; ;user.c: 64:         uint8_t temp = (uint8_t)(((uint32_t)raw * 500UL) / 1024UL);
 [v _temp `uc ~T0 @X0 1 a ]
-[e = _temp -> >> * -> _raw `ui -> 125 `ui -> 8 `i `uc ]
-"75
-[; ;user.c: 75:         pipe_write(&p_temp, (char)temp);
+[e = _temp -> / * -> _raw `ul -> 500 `ul -> 1024 `ul `uc ]
+"65
+[; ;user.c: 65:         pipe_write(&p_temp, (char)temp);
 [e ( _pipe_write (2 , &U _p_temp -> _temp `uc ]
-"76
-[; ;user.c: 76:         os_delay(10);
+"66
+[; ;user.c: 66:         os_delay(10);
 [e ( _os_delay (1 -> -> 10 `i `uc ]
-"77
-[; ;user.c: 77:     }
+"67
+[; ;user.c: 67:     }
 }
 [e :U 885 ]
 [e $U 886  ]
 [e :U 887 ]
-"78
-[; ;user.c: 78: }
+"68
+[; ;user.c: 68: }
 [e :UE 884 ]
 }
-"86
-[; ;user.c: 86: TASK task_display(void)
+"72
+[; ;user.c: 72: TASK task_display(void)
 [v _task_display `(v ~T0 @X0 1 ef ]
-"87
-[; ;user.c: 87: {
+"73
+[; ;user.c: 73: {
 {
 [e :U _task_display ]
 [f ]
-"88
-[; ;user.c: 88:     char dado;
+"74
+[; ;user.c: 74:     char dado;
 [v _dado `uc ~T0 @X0 1 a ]
-"89
-[; ;user.c: 89:     while (1) {
+"75
+[; ;user.c: 75:     while (1) {
 [e :U 890 ]
 {
-"90
-[; ;user.c: 90:         pipe_read(&p_temp, &dado);
+"76
+[; ;user.c: 76:         pipe_read(&p_temp, &dado);
 [e ( _pipe_read (2 , &U _p_temp &U _dado ]
-"91
-[; ;user.c: 91:         uint8_t t = (uint8_t)dado;
+"77
+[; ;user.c: 77:         uint8_t t = (uint8_t)dado;
 [v _t `uc ~T0 @X0 1 a ]
 [e = _t -> _dado `uc ]
-"93
-[; ;user.c: 93:         mutex_lock(&m_temp);
+"79
+[; ;user.c: 79:         mutex_lock(&m_temp);
 [e ( _mutex_lock (1 &U _m_temp ]
-"94
-[; ;user.c: 94:         temp_global = t;
+"80
+[; ;user.c: 80:         temp_global = t;
 [e = _temp_global _t ]
-"95
-[; ;user.c: 95:         mutex_unlock(&m_temp);
+"81
+[; ;user.c: 81:         mutex_unlock(&m_temp);
 [e ( _mutex_unlock (1 &U _m_temp ]
-"98
-[; ;user.c: 98:         LATEbits.LATE0 = (t < 25) ? 1 : 0;
+"84
+[; ;user.c: 84:         LATEbits.LATE0 = (t < 25) ? 1 : 0;
 [e = . . _LATEbits 0 0 -> ? < -> _t `i -> 25 `i : -> 1 `i -> 0 `i `uc ]
-"99
-[; ;user.c: 99:         LATEbits.LATE1 = (t >= 25 && t < 45) ? 1 : 0;
+"85
+[; ;user.c: 85:         LATEbits.LATE1 = (t >= 25 && t < 45) ? 1 : 0;
 [e = . . _LATEbits 0 1 -> ? && >= -> _t `i -> 25 `i < -> _t `i -> 45 `i : -> 1 `i -> 0 `i `uc ]
-"100
-[; ;user.c: 100:         LATEbits.LATE2 = (t >= 45) ? 1 : 0;
+"86
+[; ;user.c: 86:         LATEbits.LATE2 = (t >= 45) ? 1 : 0;
 [e = . . _LATEbits 0 2 -> ? >= -> _t `i -> 45 `i : -> 1 `i -> 0 `i `uc ]
-"103
-[; ;user.c: 103:         if (t > 60) LATDbits.LATD0 = ~LATDbits.LATD0;
-[e $ ! > -> _t `i -> 60 `i 892  ]
-[e = . . _LATDbits 0 0 -> ~ -> . . _LATDbits 0 0 `i `uc ]
-[e $U 893  ]
-"104
-[; ;user.c: 104:         else LATDbits.LATD0 = 0;
-[e :U 892 ]
-[e = . . _LATDbits 0 0 -> -> 0 `i `uc ]
-[e :U 893 ]
-"106
-[; ;user.c: 106:         sem_post(&s_new_data);
+"88
+[; ;user.c: 88:         sem_post(&s_new_data);
 [e ( _sem_post (1 &U _s_new_data ]
-"107
-[; ;user.c: 107:     }
+"89
+[; ;user.c: 89:     }
 }
 [e :U 889 ]
 [e $U 890  ]
 [e :U 891 ]
-"108
-[; ;user.c: 108: }
+"90
+[; ;user.c: 90: }
 [e :UE 888 ]
 }
-"117
-[; ;user.c: 117: TASK task_pwm(void)
+"94
+[; ;user.c: 94: TASK task_pwm(void)
 [v _task_pwm `(v ~T0 @X0 1 ef ]
-"118
-[; ;user.c: 118: {
+"95
+[; ;user.c: 95: {
 {
 [e :U _task_pwm ]
 [f ]
-"119
-[; ;user.c: 119:     while (1) {
-[e :U 896 ]
+"96
+[; ;user.c: 96:     while (1) {
+[e :U 894 ]
 {
-"120
-[; ;user.c: 120:         sem_wait(&s_new_data);
+"97
+[; ;user.c: 97:         sem_wait(&s_new_data);
 [e ( _sem_wait (1 &U _s_new_data ]
-"122
-[; ;user.c: 122:         mutex_lock(&m_temp);
+"99
+[; ;user.c: 99:         mutex_lock(&m_temp);
 [e ( _mutex_lock (1 &U _m_temp ]
-"123
-[; ;user.c: 123:         uint8_t t = temp_global;
+"100
+[; ;user.c: 100:         uint8_t t = temp_global;
 [v _t `uc ~T0 @X0 1 a ]
 [e = _t _temp_global ]
-"124
-[; ;user.c: 124:         mutex_unlock(&m_temp);
+"101
+[; ;user.c: 101:         mutex_unlock(&m_temp);
 [e ( _mutex_unlock (1 &U _m_temp ]
-"126
-[; ;user.c: 126:         uint16_t duty = (uint16_t)t * 13U;
+"103
+[; ;user.c: 103:         uint16_t duty = (uint16_t)t * 13U;
 [v _duty `us ~T0 @X0 1 a ]
 [e = _duty -> * -> -> _t `us `ui -> 13 `ui `us ]
-"127
-[; ;user.c: 127:         if (duty > 1024U) duty = 1024U;
-[e $ ! > -> _duty `ui -> 1024 `ui 898  ]
+"104
+[; ;user.c: 104:         if (duty > 1024U) duty = 1024U;
+[e $ ! > -> _duty `ui -> 1024 `ui 896  ]
 [e = _duty -> -> 1024 `ui `us ]
-[e :U 898 ]
-"128
-[; ;user.c: 128:         pwm_set_duty(1, duty);
-[e ( _pwm_set_duty (2 , -> -> 1 `i `uc _duty ]
-"129
-[; ;user.c: 129:     }
+[e :U 896 ]
+"105
+[; ;user.c: 105:         pwm_set_duty(duty);
+[e ( _pwm_set_duty (1 _duty ]
+"106
+[; ;user.c: 106:     }
 }
+[e :U 893 ]
+[e $U 894  ]
 [e :U 895 ]
-[e $U 896  ]
-[e :U 897 ]
-"130
-[; ;user.c: 130: }
-[e :UE 894 ]
+"107
+[; ;user.c: 107: }
+[e :UE 892 ]
 }
-"136
-[; ;user.c: 136: TASK one_shot_task(void)
+"113
+[; ;user.c: 113: TASK one_shot_task(void)
 [v _one_shot_task `(v ~T0 @X0 1 ef ]
-"137
-[; ;user.c: 137: {
+"114
+[; ;user.c: 114: {
 {
 [e :U _one_shot_task ]
 [f ]
-"138
-[; ;user.c: 138:     os_delay(2);
-[e ( _os_delay (1 -> -> 2 `i `uc ]
-"139
-[; ;user.c: 139:     LATDbits.LATD2 = ~LATDbits.LATD2;
+"116
+[; ;user.c: 116:     LATDbits.LATD2 = ~LATDbits.LATD2;
 [e = . . _LATDbits 0 2 -> ~ -> . . _LATDbits 0 2 `i `uc ]
-"140
-[; ;user.c: 140:     os_task_exit();
+"117
+[; ;user.c: 117:     os_task_exit();
 [e ( _os_task_exit ..  ]
-"141
-[; ;user.c: 141: }
-[e :UE 899 ]
+"118
+[; ;user.c: 118: }
+[e :UE 897 ]
 }

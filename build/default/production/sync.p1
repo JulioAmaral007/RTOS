@@ -22,25 +22,25 @@ Version 4.0 HI-TECH Software Intermediate Code
 "16956
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 16956: extern volatile INTCONbits_t INTCONbits __attribute__((address(0xFF2)));
 [v _INTCONbits `VS831 ~T0 @X0 0 e@4082 ]
-"22 sync.c
-[; ;sync.c: 22:         sem->fila[sem->pos_input] = r_queue.pos_task_running;
+"21 sync.c
+[; ;sync.c: 21:         sem->fila[sem->pos_input] = r_queue.pos_task_running;
 [c E63 0 1 2 3 4 .. ]
 [n E63 . READY WAITING RUNNING WAITING_SEM WAITING_MUTEX  ]
 [v F85 `(v ~T0 @X0 0 tf ]
-"18 ./types.h
-[; ;./types.h: 18: typedef struct hw_stack {
+"20 ./types.h
+[; ;./types.h: 20: typedef struct hw_stack {
 [s S3 `uc 1 `uc 1 `uc 1 ]
 [n S3 hw_stack TOSL_REG TOSH_REG TOSU_REG ]
-"24
-[; ;./types.h: 24: typedef struct sw_stack {
+"27
+[; ;./types.h: 27: typedef struct sw_stack {
 [s S4 `S3 -> 31 `i `uc 1 ]
 [n S4 sw_stack stack stack_size ]
-"29
-[; ;./types.h: 29: typedef struct tcb {
+"32
+[; ;./types.h: 32: typedef struct tcb {
 [s S5 `uc 1 `E63 1 `*F85 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `S4 1 ]
 [n S5 tcb task_id task_state task_ptr task_delay task_priority W_REG STATUS_REG BSR_REG PRODL_REG PRODH_REG FSR0L_REG FSR0H_REG FSR1L_REG FSR1H_REG FSR2L_REG FSR2H_REG TABLAT_REG TBLPTRL_REG TBLPTRH_REG TBLPTRU_REG PCLATH_REG PCLATU_REG task_stack ]
-"60
-[; ;./types.h: 60: typedef struct ready_queue {
+"63
+[; ;./types.h: 63: typedef struct ready_queue {
 [s S6 `S5 -> 5 `i `uc 1 `*S5 1 `uc 1 ]
 [n S6 ready_queue TASKS size task_running pos_task_running ]
 "6 sync.c
@@ -878,64 +878,64 @@ Version 4.0 HI-TECH Software Intermediate Code
 "17404
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 17404: __asm("TOSU equ 0FFFh");
 [; <" TOSU equ 0FFFh ;# ">
-"9 sync.c
-[; ;sync.c: 9: void sem_init(sem_t *sem, uint8_t valor)
+"8 sync.c
+[; ;sync.c: 8: void sem_init(sem_t *sem, uint8_t valor)
 [v _sem_init `(v ~T0 @X0 1 ef2`*S1`uc ]
-"10
-[; ;sync.c: 10: {
+"9
+[; ;sync.c: 9: {
 {
 [e :U _sem_init ]
-"9
-[; ;sync.c: 9: void sem_init(sem_t *sem, uint8_t valor)
+"8
+[; ;sync.c: 8: void sem_init(sem_t *sem, uint8_t valor)
 [v _sem `*S1 ~T0 @X0 1 r1 ]
 [v _valor `uc ~T0 @X0 1 r2 ]
-"10
-[; ;sync.c: 10: {
+"9
+[; ;sync.c: 9: {
 [f ]
-"11
-[; ;sync.c: 11:     sem->contador = valor;
+"10
+[; ;sync.c: 10:     sem->contador = valor;
 [e = . *U _sem 0 -> _valor `i ]
-"12
-[; ;sync.c: 12:     sem->pos_input = 0;
+"11
+[; ;sync.c: 11:     sem->pos_input = 0;
 [e = . *U _sem 2 -> -> 0 `i `uc ]
-"13
-[; ;sync.c: 13:     sem->pos_output = 0;
+"12
+[; ;sync.c: 12:     sem->pos_output = 0;
 [e = . *U _sem 3 -> -> 0 `i `uc ]
-"14
-[; ;sync.c: 14: }
+"13
+[; ;sync.c: 13: }
 [e :UE 882 ]
 }
-"16
-[; ;sync.c: 16: void sem_wait(sem_t *sem)
+"15
+[; ;sync.c: 15: void sem_wait(sem_t *sem)
 [v _sem_wait `(v ~T0 @X0 1 ef1`*S1 ]
-"17
-[; ;sync.c: 17: {
+"16
+[; ;sync.c: 16: {
 {
 [e :U _sem_wait ]
-"16
-[; ;sync.c: 16: void sem_wait(sem_t *sem)
+"15
+[; ;sync.c: 15: void sem_wait(sem_t *sem)
 [v _sem `*S1 ~T0 @X0 1 r1 ]
-"17
-[; ;sync.c: 17: {
+"16
+[; ;sync.c: 16: {
 [f ]
-"18
-[; ;sync.c: 18:     INTCONbits.GIE = 0;;
+"17
+[; ;sync.c: 17:     INTCONbits.GIE = 0;;
 [e = . . _INTCONbits 1 7 -> -> 0 `i `uc ]
-"20
-[; ;sync.c: 20:     sem->contador--;
+"19
+[; ;sync.c: 19:     sem->contador--;
 [e -- . *U _sem 0 -> 1 `i ]
-"21
-[; ;sync.c: 21:     if (sem->contador < 0) {
+"20
+[; ;sync.c: 20:     if (sem->contador < 0) {
 [e $ ! < . *U _sem 0 -> 0 `i 884  ]
 {
-"22
-[; ;sync.c: 22:         sem->fila[sem->pos_input] = r_queue.pos_task_running;
+"21
+[; ;sync.c: 21:         sem->fila[sem->pos_input] = r_queue.pos_task_running;
 [e = *U + &U . *U _sem 1 * -> . *U _sem 2 `ux -> -> # *U &U . *U _sem 1 `ui `ux . _r_queue 3 ]
-"23
-[; ;sync.c: 23:         sem->pos_input = (sem->pos_input + 1) % 4;
+"22
+[; ;sync.c: 22:         sem->pos_input = (sem->pos_input + 1) % 4;
 [e = . *U _sem 2 -> % + -> . *U _sem 2 `i -> 1 `i -> 4 `i `uc ]
-"25
-[; ;sync.c: 25:         do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_SEM; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
+"24
+[; ;sync.c: 24:         do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_SEM; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
 [e :U 887 ]
 {
 [e $ ! == -> . *U . _r_queue 2 1 `ui -> . `E63 2 `ui 888  ]
@@ -975,11 +975,11 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :U 888 ]
 }
 [e :U 886 ]
-"26
-[; ;sync.c: 26:         scheduler();
+"25
+[; ;sync.c: 25:         scheduler();
 [e ( _scheduler ..  ]
-"27
-[; ;sync.c: 27:         do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
+"26
+[; ;sync.c: 26:         do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
 [e :U 894 ]
 {
 [e $ ! == -> . *U . _r_queue 2 1 `ui -> . `E63 0 `ui 895  ]
@@ -1030,133 +1030,133 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :U 895 ]
 }
 [e :U 893 ]
-"28
-[; ;sync.c: 28:     }
+"27
+[; ;sync.c: 27:     }
 }
 [e :U 884 ]
-"30
-[; ;sync.c: 30:     INTCONbits.GIE = 1;;
+"29
+[; ;sync.c: 29:     INTCONbits.GIE = 1;;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"31
-[; ;sync.c: 31: }
+"30
+[; ;sync.c: 30: }
 [e :UE 883 ]
 }
-"33
-[; ;sync.c: 33: void sem_post(sem_t *sem)
+"32
+[; ;sync.c: 32: void sem_post(sem_t *sem)
 [v _sem_post `(v ~T0 @X0 1 ef1`*S1 ]
-"34
-[; ;sync.c: 34: {
+"33
+[; ;sync.c: 33: {
 {
 [e :U _sem_post ]
-"33
-[; ;sync.c: 33: void sem_post(sem_t *sem)
+"32
+[; ;sync.c: 32: void sem_post(sem_t *sem)
 [v _sem `*S1 ~T0 @X0 1 r1 ]
-"34
-[; ;sync.c: 34: {
+"33
+[; ;sync.c: 33: {
 [f ]
-"35
-[; ;sync.c: 35:     INTCONbits.GIE = 0;;
+"34
+[; ;sync.c: 34:     INTCONbits.GIE = 0;;
 [e = . . _INTCONbits 1 7 -> -> 0 `i `uc ]
-"37
-[; ;sync.c: 37:     sem->contador++;
+"36
+[; ;sync.c: 36:     sem->contador++;
 [e ++ . *U _sem 0 -> 1 `i ]
-"38
-[; ;sync.c: 38:     if (sem->contador <= 0) {
+"37
+[; ;sync.c: 37:     if (sem->contador <= 0) {
 [e $ ! <= . *U _sem 0 -> 0 `i 902  ]
 {
-"40
-[; ;sync.c: 40:         r_queue.TASKS[sem->fila[sem->pos_output]].task_state = READY;
+"39
+[; ;sync.c: 39:         r_queue.TASKS[sem->fila[sem->pos_output]].task_state = READY;
 [e = . *U + &U . _r_queue 0 * -> *U + &U . *U _sem 1 * -> . *U _sem 3 `ux -> -> # *U &U . *U _sem 1 `ui `ux `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 . `E63 0 ]
-"41
-[; ;sync.c: 41:         sem->pos_output = (sem->pos_output + 1) % 4;
+"40
+[; ;sync.c: 40:         sem->pos_output = (sem->pos_output + 1) % 4;
 [e = . *U _sem 3 -> % + -> . *U _sem 3 `i -> 1 `i -> 4 `i `uc ]
-"42
-[; ;sync.c: 42:     }
+"41
+[; ;sync.c: 41:     }
 }
 [e :U 902 ]
-"44
-[; ;sync.c: 44:     INTCONbits.GIE = 1;;
+"43
+[; ;sync.c: 43:     INTCONbits.GIE = 1;;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"45
-[; ;sync.c: 45: }
+"44
+[; ;sync.c: 44: }
 [e :UE 901 ]
 }
-"51
-[; ;sync.c: 51: void mutex_init(mutex_t *m)
+"50
+[; ;sync.c: 50: void mutex_init(mutex_t *m)
 [v _mutex_init `(v ~T0 @X0 1 ef1`*S2 ]
-"52
-[; ;sync.c: 52: {
+"51
+[; ;sync.c: 51: {
 {
 [e :U _mutex_init ]
-"51
-[; ;sync.c: 51: void mutex_init(mutex_t *m)
+"50
+[; ;sync.c: 50: void mutex_init(mutex_t *m)
 [v _m `*S2 ~T0 @X0 1 r1 ]
-"52
-[; ;sync.c: 52: {
+"51
+[; ;sync.c: 51: {
 [f ]
-"53
-[; ;sync.c: 53:     m->locked = 0;
+"52
+[; ;sync.c: 52:     m->locked = 0;
 [e = . *U _m 0 -> -> 0 `i `uc ]
-"54
-[; ;sync.c: 54:     m->owner_pos = 0xFF;
+"53
+[; ;sync.c: 53:     m->owner_pos = 0xFF;
 [e = . *U _m 1 -> -> 255 `i `uc ]
-"55
-[; ;sync.c: 55:     m->pos_input = 0;
+"54
+[; ;sync.c: 54:     m->pos_input = 0;
 [e = . *U _m 3 -> -> 0 `i `uc ]
-"56
-[; ;sync.c: 56:     m->pos_output = 0;
+"55
+[; ;sync.c: 55:     m->pos_output = 0;
 [e = . *U _m 4 -> -> 0 `i `uc ]
-"57
-[; ;sync.c: 57: }
+"56
+[; ;sync.c: 56: }
 [e :UE 903 ]
 }
-"59
-[; ;sync.c: 59: void mutex_lock(mutex_t *m)
+"58
+[; ;sync.c: 58: void mutex_lock(mutex_t *m)
 [v _mutex_lock `(v ~T0 @X0 1 ef1`*S2 ]
-"60
-[; ;sync.c: 60: {
+"59
+[; ;sync.c: 59: {
 {
 [e :U _mutex_lock ]
-"59
-[; ;sync.c: 59: void mutex_lock(mutex_t *m)
+"58
+[; ;sync.c: 58: void mutex_lock(mutex_t *m)
 [v _m `*S2 ~T0 @X0 1 r1 ]
-"60
-[; ;sync.c: 60: {
+"59
+[; ;sync.c: 59: {
 [f ]
-"61
-[; ;sync.c: 61:     INTCONbits.GIE = 0;;
+"60
+[; ;sync.c: 60:     INTCONbits.GIE = 0;;
 [e = . . _INTCONbits 1 7 -> -> 0 `i `uc ]
-"63
-[; ;sync.c: 63:     if (m->locked == 0) {
+"62
+[; ;sync.c: 62:     if (m->locked == 0) {
 [e $ ! == -> . *U _m 0 `i -> 0 `i 905  ]
 {
-"65
-[; ;sync.c: 65:         m->locked = 1;
+"64
+[; ;sync.c: 64:         m->locked = 1;
 [e = . *U _m 0 -> -> 1 `i `uc ]
-"66
-[; ;sync.c: 66:         m->owner_pos = r_queue.pos_task_running;
+"65
+[; ;sync.c: 65:         m->owner_pos = r_queue.pos_task_running;
 [e = . *U _m 1 . _r_queue 3 ]
-"67
-[; ;sync.c: 67:     } else if (m->owner_pos == r_queue.pos_task_running) {
+"66
+[; ;sync.c: 66:     } else if (m->owner_pos == r_queue.pos_task_running) {
 }
 [e $U 906  ]
 [e :U 905 ]
 [e $ ! == -> . *U _m 1 `i -> . _r_queue 3 `i 907  ]
 {
-"69
-[; ;sync.c: 69:     } else {
+"68
+[; ;sync.c: 68:     } else {
 }
 [e $U 908  ]
 [e :U 907 ]
 {
-"71
-[; ;sync.c: 71:         m->fila[m->pos_input] = r_queue.pos_task_running;
+"70
+[; ;sync.c: 70:         m->fila[m->pos_input] = r_queue.pos_task_running;
 [e = *U + &U . *U _m 2 * -> . *U _m 3 `ux -> -> # *U &U . *U _m 2 `ui `ux . _r_queue 3 ]
-"72
-[; ;sync.c: 72:         m->pos_input = (m->pos_input + 1) % 4;
+"71
+[; ;sync.c: 71:         m->pos_input = (m->pos_input + 1) % 4;
 [e = . *U _m 3 -> % + -> . *U _m 3 `i -> 1 `i -> 4 `i `uc ]
-"73
-[; ;sync.c: 73:         do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_MUTEX; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
+"72
+[; ;sync.c: 72:         do { if (r_queue.task_running->task_state == RUNNING) { r_queue.task_running->task_state = WAITING_MUTEX; r_queue.task_running->BSR_REG = BSR; r_queue.task_running->FSR0H_REG = FSR0H; r_queue.task_running->FSR0L_REG = FSR0L; r_queue.task_running->FSR1H_REG = FSR1H; r_queue.task_running->FSR1L_REG = FSR1L; r_queue.task_running->FSR2H_REG = FSR2H; r_queue.task_running->FSR2L_REG = FSR2L; r_queue.task_running->PCLATH_REG = PCLATH; r_queue.task_running->PCLATU_REG = PCLATU; r_queue.task_running->PRODH_REG = PRODH; r_queue.task_running->PRODL_REG = PRODL; r_queue.task_running->TABLAT_REG = TABLAT; r_queue.task_running->TBLPTRH_REG = TBLPTRH; r_queue.task_running->TBLPTRL_REG = TBLPTRL; r_queue.task_running->TBLPTRU_REG = TBLPTRU; r_queue.task_running->W_REG = WREG; r_queue.task_running->STATUS_REG = STATUS; r_queue.task_running->task_stack.stack_size = 0; while (STKPTR) { r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG = TOSL; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG = TOSH; r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG = TOSU; r_queue.task_running->task_stack.stack_size += 1; __asm("POP"); } } } while (0);;
 [e :U 911 ]
 {
 [e $ ! == -> . *U . _r_queue 2 1 `ui -> . `E63 2 `ui 912  ]
@@ -1196,11 +1196,11 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :U 912 ]
 }
 [e :U 910 ]
-"74
-[; ;sync.c: 74:         scheduler();
+"73
+[; ;sync.c: 73:         scheduler();
 [e ( _scheduler ..  ]
-"75
-[; ;sync.c: 75:         do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
+"74
+[; ;sync.c: 74:         do { if (r_queue.task_running->task_state == READY) { r_queue.task_running->task_state = RUNNING; BSR = r_queue.task_running->BSR_REG; FSR0H = r_queue.task_running->FSR0H_REG; FSR0L = r_queue.task_running->FSR0L_REG; FSR1H = r_queue.task_running->FSR1H_REG; FSR1L = r_queue.task_running->FSR1L_REG; FSR2H = r_queue.task_running->FSR2H_REG; FSR2L = r_queue.task_running->FSR2L_REG; PCLATH = r_queue.task_running->PCLATH_REG; PCLATU = r_queue.task_running->PCLATU_REG; PRODH = r_queue.task_running->PRODH_REG; PRODL = r_queue.task_running->PRODL_REG; TABLAT = r_queue.task_running->TABLAT_REG; TBLPTRH = r_queue.task_running->TBLPTRH_REG; TBLPTRL = r_queue.task_running->TBLPTRL_REG; TBLPTRU = r_queue.task_running->TBLPTRU_REG; STATUS = r_queue.task_running->STATUS_REG; WREG = r_queue.task_running->W_REG; STKPTR = 0; if (r_queue.task_running->task_stack.stack_size > 0) { do { __asm("PUSH"); r_queue.task_running->task_stack.stack_size -= 1; TOSL = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSL_REG; TOSH = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSH_REG; TOSU = r_queue.task_running->task_stack.stack[r_queue.task_running->task_stack.stack_size].TOSU_REG; } while (r_queue.task_running->task_stack.stack_size); } else { __asm("PUSH"); TOSL = (uint8_t)((uint24_t)r_queue.task_running->task_ptr & 0xFF); TOSH = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 8) & 0xFF); TOSU = (uint8_t)(((uint24_t)r_queue.task_running->task_ptr >> 16) & 0xFF); } rr_quantum = 5; } } while (0);;
 [e :U 918 ]
 {
 [e $ ! == -> . *U . _r_queue 2 1 `ui -> . `E63 0 `ui 919  ]
@@ -1251,81 +1251,81 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :U 919 ]
 }
 [e :U 917 ]
-"77
-[; ;sync.c: 77:     }
+"76
+[; ;sync.c: 76:     }
 }
 [e :U 908 ]
 [e :U 906 ]
-"79
-[; ;sync.c: 79:     INTCONbits.GIE = 1;;
+"78
+[; ;sync.c: 78:     INTCONbits.GIE = 1;;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"80
-[; ;sync.c: 80: }
+"79
+[; ;sync.c: 79: }
 [e :UE 904 ]
 }
-"82
-[; ;sync.c: 82: void mutex_unlock(mutex_t *m)
+"81
+[; ;sync.c: 81: void mutex_unlock(mutex_t *m)
 [v _mutex_unlock `(v ~T0 @X0 1 ef1`*S2 ]
-"83
-[; ;sync.c: 83: {
+"82
+[; ;sync.c: 82: {
 {
 [e :U _mutex_unlock ]
-"82
-[; ;sync.c: 82: void mutex_unlock(mutex_t *m)
+"81
+[; ;sync.c: 81: void mutex_unlock(mutex_t *m)
 [v _m `*S2 ~T0 @X0 1 r1 ]
-"83
-[; ;sync.c: 83: {
+"82
+[; ;sync.c: 82: {
 [f ]
-"84
-[; ;sync.c: 84:     INTCONbits.GIE = 0;;
+"83
+[; ;sync.c: 83:     INTCONbits.GIE = 0;;
 [e = . . _INTCONbits 1 7 -> -> 0 `i `uc ]
-"87
-[; ;sync.c: 87:     if (m->owner_pos != r_queue.pos_task_running) {
+"86
+[; ;sync.c: 86:     if (m->owner_pos != r_queue.pos_task_running) {
 [e $ ! != -> . *U _m 1 `i -> . _r_queue 3 `i 926  ]
 {
-"88
-[; ;sync.c: 88:         INTCONbits.GIE = 1;;
+"87
+[; ;sync.c: 87:         INTCONbits.GIE = 1;;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"89
-[; ;sync.c: 89:         return;
+"88
+[; ;sync.c: 88:         return;
 [e $UE 925  ]
-"90
-[; ;sync.c: 90:     }
+"89
+[; ;sync.c: 89:     }
 }
 [e :U 926 ]
-"92
-[; ;sync.c: 92:     if (m->pos_input != m->pos_output) {
+"91
+[; ;sync.c: 91:     if (m->pos_input != m->pos_output) {
 [e $ ! != -> . *U _m 3 `i -> . *U _m 4 `i 927  ]
 {
-"94
-[; ;sync.c: 94:         m->owner_pos = m->fila[m->pos_output];
+"93
+[; ;sync.c: 93:         m->owner_pos = m->fila[m->pos_output];
 [e = . *U _m 1 *U + &U . *U _m 2 * -> . *U _m 4 `ux -> -> # *U &U . *U _m 2 `ui `ux ]
-"95
-[; ;sync.c: 95:         m->pos_output = (m->pos_output + 1) % 4;
+"94
+[; ;sync.c: 94:         m->pos_output = (m->pos_output + 1) % 4;
 [e = . *U _m 4 -> % + -> . *U _m 4 `i -> 1 `i -> 4 `i `uc ]
-"96
-[; ;sync.c: 96:         r_queue.TASKS[m->owner_pos].task_state = READY;
+"95
+[; ;sync.c: 95:         r_queue.TASKS[m->owner_pos].task_state = READY;
 [e = . *U + &U . _r_queue 0 * -> . *U _m 1 `ux -> -> # *U &U . _r_queue 0 `ui `ux 1 . `E63 0 ]
-"98
-[; ;sync.c: 98:     } else {
+"97
+[; ;sync.c: 97:     } else {
 }
 [e $U 928  ]
 [e :U 927 ]
 {
-"100
-[; ;sync.c: 100:         m->locked = 0;
+"99
+[; ;sync.c: 99:         m->locked = 0;
 [e = . *U _m 0 -> -> 0 `i `uc ]
-"101
-[; ;sync.c: 101:         m->owner_pos = 0xFF;
+"100
+[; ;sync.c: 100:         m->owner_pos = 0xFF;
 [e = . *U _m 1 -> -> 255 `i `uc ]
-"102
-[; ;sync.c: 102:     }
+"101
+[; ;sync.c: 101:     }
 }
 [e :U 928 ]
-"104
-[; ;sync.c: 104:     INTCONbits.GIE = 1;;
+"103
+[; ;sync.c: 103:     INTCONbits.GIE = 1;;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"105
-[; ;sync.c: 105: }
+"104
+[; ;sync.c: 104: }
 [e :UE 925 ]
 }

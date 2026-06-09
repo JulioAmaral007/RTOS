@@ -1,37 +1,37 @@
 Version 4.0 HI-TECH Software Intermediate Code
 "8 ./sync.h
 [; ;./sync.h: 8: typedef struct sem {
-[s S5 `i 1 `uc -> 4 `i `uc 1 `uc 1 ]
-[n S5 sem contador fila pos_input pos_output ]
-"9 ./com.h
-[; ;./com.h: 9: typedef struct pipe {
-[s S7 `*uc 1 `uc 1 `uc 1 `uc 1 `S5 1 `S5 1 ]
-[n S7 pipe fila_dados capacity pos_input pos_output s_input s_output ]
+[s S1 `i 1 `uc -> 4 `i `uc 1 `uc 1 ]
+[n S1 sem contador fila pos_input pos_output ]
+"7 ./com.h
+[; ;./com.h: 7: typedef struct pipe {
+[s S3 `*uc 1 `uc 1 `uc 1 `uc 1 `S1 1 `S1 1 ]
+[n S3 pipe fila_dados capacity pos_input pos_output s_input s_output ]
 "150 ./mem.h
 [v _SRAMalloc `(*uc ~T0 @X0 0 ef1`uc ]
 "16 ./sync.h
 [; ;./sync.h: 16: void sem_init(sem_t *sem, uint8_t valor);
-[v _sem_init `(v ~T0 @X0 0 ef2`*S5`uc ]
+[v _sem_init `(v ~T0 @X0 0 ef2`*S1`uc ]
 "151 ./mem.h
 [v _SRAMfree `(v ~T0 @X0 0 ef1`*uc ]
 "17 ./sync.h
 [; ;./sync.h: 17: void sem_wait(sem_t *sem);
-[v _sem_wait `(v ~T0 @X0 0 ef1`*S5 ]
+[v _sem_wait `(v ~T0 @X0 0 ef1`*S1 ]
 "18
 [; ;./sync.h: 18: void sem_post(sem_t *sem);
-[v _sem_post `(v ~T0 @X0 0 ef1`*S5 ]
+[v _sem_post `(v ~T0 @X0 0 ef1`*S1 ]
 "136 ./mem.h
 [v __uDynamicHeap `uc ~T0 @X0 -> 512 `i e ]
 "5 com.c
 [; ;com.c: 5: void pipe_init(pipe_t *p)
-[v _pipe_init `(v ~T0 @X0 1 ef1`*S7 ]
+[v _pipe_init `(v ~T0 @X0 1 ef1`*S3 ]
 "6
 [; ;com.c: 6: {
 {
 [e :U _pipe_init ]
 "5
 [; ;com.c: 5: void pipe_init(pipe_t *p)
-[v _p `*S7 ~T0 @X0 1 r1 ]
+[v _p `*S3 ~T0 @X0 1 r1 ]
 "6
 [; ;com.c: 6: {
 [f ]
@@ -40,9 +40,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e = . *U _p 0 -> ( _SRAMalloc (1 -> -> 4 `i `uc `*uc ]
 "8
 [; ;com.c: 8:     if (p->fila_dados == ((void*)0)) return;
-[e $ ! == . *U _p 0 -> -> -> 0 `i `*v `*uc 11  ]
-[e $UE 10  ]
-[e :U 11 ]
+[e $ ! == . *U _p 0 -> -> -> 0 `i `*v `*uc 7  ]
+[e $UE 6  ]
+[e :U 7 ]
 "9
 [; ;com.c: 9:     p->capacity = 4;
 [e = . *U _p 1 -> -> 4 `i `uc ]
@@ -60,18 +60,18 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e ( _sem_init (2 , &U . *U _p 5 -> -> 0 `i `uc ]
 "14
 [; ;com.c: 14: }
-[e :UE 10 ]
+[e :UE 6 ]
 }
 "16
 [; ;com.c: 16: void pipe_destroy(pipe_t *p)
-[v _pipe_destroy `(v ~T0 @X0 1 ef1`*S7 ]
+[v _pipe_destroy `(v ~T0 @X0 1 ef1`*S3 ]
 "17
 [; ;com.c: 17: {
 {
 [e :U _pipe_destroy ]
 "16
 [; ;com.c: 16: void pipe_destroy(pipe_t *p)
-[v _p `*S7 ~T0 @X0 1 r1 ]
+[v _p `*S3 ~T0 @X0 1 r1 ]
 "17
 [; ;com.c: 17: {
 [f ]
@@ -86,18 +86,18 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e = . *U _p 1 -> -> 0 `i `uc ]
 "21
 [; ;com.c: 21: }
-[e :UE 12 ]
+[e :UE 8 ]
 }
 "23
 [; ;com.c: 23: void pipe_write(pipe_t *p, char dado)
-[v _pipe_write `(v ~T0 @X0 1 ef2`*S7`uc ]
+[v _pipe_write `(v ~T0 @X0 1 ef2`*S3`uc ]
 "24
 [; ;com.c: 24: {
 {
 [e :U _pipe_write ]
 "23
 [; ;com.c: 23: void pipe_write(pipe_t *p, char dado)
-[v _p `*S7 ~T0 @X0 1 r1 ]
+[v _p `*S3 ~T0 @X0 1 r1 ]
 [v _dado `uc ~T0 @X0 1 r2 ]
 "24
 [; ;com.c: 24: {
@@ -116,18 +116,18 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e ( _sem_post (1 &U . *U _p 5 ]
 "29
 [; ;com.c: 29: }
-[e :UE 13 ]
+[e :UE 9 ]
 }
 "31
 [; ;com.c: 31: void pipe_read(pipe_t *p, char *dado)
-[v _pipe_read `(v ~T0 @X0 1 ef2`*S7`*uc ]
+[v _pipe_read `(v ~T0 @X0 1 ef2`*S3`*uc ]
 "32
 [; ;com.c: 32: {
 {
 [e :U _pipe_read ]
 "31
 [; ;com.c: 31: void pipe_read(pipe_t *p, char *dado)
-[v _p `*S7 ~T0 @X0 1 r1 ]
+[v _p `*S3 ~T0 @X0 1 r1 ]
 [v _dado `*uc ~T0 @X0 1 r2 ]
 "32
 [; ;com.c: 32: {
@@ -146,5 +146,5 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e ( _sem_post (1 &U . *U _p 4 ]
 "37
 [; ;com.c: 37: }
-[e :UE 14 ]
+[e :UE 10 ]
 }

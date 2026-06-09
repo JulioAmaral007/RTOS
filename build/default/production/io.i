@@ -9828,22 +9828,20 @@ unsigned char __t3rd16on(void);
 
 
 
-void pwm_init(uint8_t channel);
-void pwm_set_duty(uint8_t channel, uint16_t duty);
+void pwm_init(void);
+void pwm_set_duty(uint16_t duty);
 
 
 void adc_init(void);
-uint16_t adc_read(uint8_t channel);
+uint16_t adc_read(void);
 
 
-void ext_int_init(uint8_t int_pin, uint8_t edge);
+void ext_int_init(void);
 # 2 "io.c" 2
-# 12 "io.c"
-void pwm_init(uint8_t channel)
-{
-    if (channel != 1)
-        return;
 
+
+void pwm_init(void)
+{
     TRISCbits.TRISC2 = 0;
     CCP1CON = 0b00001100;
     T2CON = 0b00000100;
@@ -9852,19 +9850,20 @@ void pwm_init(uint8_t channel)
     CCP1CONbits.DC1B = 0;
 }
 
-void pwm_set_duty(uint8_t channel, uint16_t duty)
+void pwm_set_duty(uint16_t duty)
 {
-    if (channel != 1)
-        return;
-
     uint16_t duty_max = (uint16_t)((PR2 + 1) * 4);
     if (duty > duty_max)
         duty = duty_max;
 
     CCPR1L = (uint8_t)(duty >> 2);
-    CCP1CONbits.DC1B = (uint8_t)(duty & 0x03);
+    CCP1CONbits.DC1B = (uint8_t)(duty & 0b11);
 }
-# 45 "io.c"
+
+
+
+
+
 void adc_init(void)
 {
     TRISAbits.RA0 = 1;
@@ -9875,27 +9874,28 @@ void adc_init(void)
 
     ADCON2bits.ADFM = 1;
     ADCON2bits.ACQT = 0b110;
-    ADCON2bits.ADCS = 0b010;
+    ADCON2bits.ADCS = 0b100;
 
+    ADCON0bits.CHS = 0b00000;
     ADCON0bits.ADON = 1;
 }
 
-uint16_t adc_read(uint8_t channel)
+uint16_t adc_read(void)
 {
-    ADCON0bits.CHS = channel;
     ADCON0bits.GO = 1;
     while (ADCON0bits.GO);
     return (uint16_t)((ADRESH << 8) | ADRESL);
 }
-# 75 "io.c"
-void ext_int_init(uint8_t int_pin, uint8_t edge)
-{
-    if (int_pin == 0) {
-        TRISBbits.TRISB0 = 1;
-        ANSELBbits.ANSB0 = 0;
-        INTCON2bits.INTEDG0 = edge;
-        INTCONbits.INT0IF = 0;
-        INTCONbits.INT0IE = 1;
-    }
 
+
+
+
+
+void ext_int_init(void)
+{
+    TRISBbits.TRISB0 = 1;
+    ANSELBbits.ANSB0 = 0;
+    INTCON2bits.INTEDG0 = 0;
+    INTCONbits.INT0IF = 0;
+    INTCONbits.INT0IE = 1;
 }

@@ -43,20 +43,20 @@ Version 4.0 HI-TECH Software Intermediate Code
 [c E6143 0 1 2 3 4 .. ]
 [n E6143 . READY WAITING RUNNING WAITING_SEM WAITING_MUTEX  ]
 [v F6165 `(v ~T0 @X0 0 tf ]
-"18 ./types.h
-[; ;./types.h: 18: typedef struct hw_stack {
+"20 ./types.h
+[; ;./types.h: 20: typedef struct hw_stack {
 [s S876 `uc 1 `uc 1 `uc 1 ]
 [n S876 hw_stack TOSL_REG TOSH_REG TOSU_REG ]
-"24
-[; ;./types.h: 24: typedef struct sw_stack {
+"27
+[; ;./types.h: 27: typedef struct sw_stack {
 [s S877 `S876 -> 31 `i `uc 1 ]
 [n S877 sw_stack stack stack_size ]
-"29
-[; ;./types.h: 29: typedef struct tcb {
+"32
+[; ;./types.h: 32: typedef struct tcb {
 [s S878 `uc 1 `E6143 1 `*F6165 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `S877 1 ]
 [n S878 tcb task_id task_state task_ptr task_delay task_priority W_REG STATUS_REG BSR_REG PRODL_REG PRODH_REG FSR0L_REG FSR0H_REG FSR1L_REG FSR1H_REG FSR2L_REG FSR2H_REG TABLAT_REG TBLPTRL_REG TBLPTRH_REG TBLPTRU_REG PCLATH_REG PCLATU_REG task_stack ]
-"60
-[; ;./types.h: 60: typedef struct ready_queue {
+"63
+[; ;./types.h: 63: typedef struct ready_queue {
 [s S879 `S878 -> 5 `i `uc 1 `*S878 1 `uc 1 ]
 [n S879 ready_queue TASKS size task_running pos_task_running ]
 "8 ./kernel.h
@@ -66,8 +66,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "16
 [; ;./kernel.h: 16: void os_create_task(uint8_t id, f_ptr func, uint8_t prior);
 [v _os_create_task `(v ~T0 @X0 0 ef3`uc`*F6198`uc ]
-"12 ./user.h
-[; ;./user.h: 12: TASK one_shot_task(void);
+"11 ./user.h
+[; ;./user.h: 11: TASK one_shot_task(void);
 [v _one_shot_task `(v ~T0 @X0 0 ef ]
 "16449 C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.30/packs/Microchip/PIC18F-K_DFP/1.15.303/xc8\pic\include\proc/pic18f46k22.h: 16449: extern volatile unsigned char BSR __attribute__((address(0xFE0)));
@@ -924,8 +924,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;hw.c: 18:     T0CONbits.PSA = 0;
 [e = . . _T0CONbits 0 1 -> -> 0 `i `uc ]
 "19
-[; ;hw.c: 19:     T0CONbits.T0PS = 0b111;
-[e = . . _T0CONbits 0 0 -> -> 7 `i `uc ]
+[; ;hw.c: 19:     T0CONbits.T0PS = 0b101;
+[e = . . _T0CONbits 0 0 -> -> 5 `i `uc ]
 "20
 [; ;hw.c: 20:     T0CONbits.TMR0ON = 1;
 [e = . . _T0CONbits 0 5 -> -> 1 `i `uc ]

@@ -2,7 +2,6 @@
 #define USER_H
 
 #include "types.h"
-#include <stdint.h>
 
 void config_user(void);
 

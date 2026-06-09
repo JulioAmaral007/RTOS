@@ -9,14 +9,14 @@ Version 4.0 HI-TECH Software Intermediate Code
 "16
 [; ;./kernel.h: 16: void os_create_task(uint8_t id, f_ptr func, uint8_t prior);
 [v _os_create_task `(v ~T0 @X0 0 ef3`uc`*F6196`uc ]
-"9 ./user.h
-[; ;./user.h: 9: TASK task_sensor(void);
+"8 ./user.h
+[; ;./user.h: 8: TASK task_sensor(void);
 [v _task_sensor `(v ~T0 @X0 0 ef ]
-"10
-[; ;./user.h: 10: TASK task_display(void);
+"9
+[; ;./user.h: 9: TASK task_display(void);
 [v _task_display `(v ~T0 @X0 0 ef ]
-"11
-[; ;./user.h: 11: TASK task_pwm(void);
+"10
+[; ;./user.h: 10: TASK task_pwm(void);
 [v _task_pwm `(v ~T0 @X0 0 ef ]
 "19 ./kernel.h
 [; ;./kernel.h: 19: void os_start(void);
@@ -804,8 +804,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 31:     os_create_task(3, task_display, 5);
 [e ( _os_create_task (3 , , -> -> 3 `i `uc &U _task_display -> -> 5 `i `uc ]
 "32
-[; ;main.c: 32:     os_create_task(4, task_pwm, 5);
-[e ( _os_create_task (3 , , -> -> 4 `i `uc &U _task_pwm -> -> 5 `i `uc ]
+[; ;main.c: 32:     os_create_task(4, task_pwm, 4);
+[e ( _os_create_task (3 , , -> -> 4 `i `uc &U _task_pwm -> -> 4 `i `uc ]
 "36
 [; ;main.c: 36:     os_start();
 [e ( _os_start ..  ]

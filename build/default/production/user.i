@@ -126,20 +126,23 @@ typedef uint32_t uint_fast32_t;
 
 typedef void TASK;
 
-typedef enum {READY = 0,
-              WAITING,
-              RUNNING,
-              WAITING_SEM,
-              WAITING_MUTEX
-             } state_t;
+typedef enum {
+    READY = 0,
+    WAITING,
+    RUNNING,
+    WAITING_SEM,
+    WAITING_MUTEX
+} state_t;
 
 typedef void (*f_ptr)(void);
+
 
 typedef struct hw_stack {
     uint8_t TOSL_REG;
     uint8_t TOSH_REG;
     uint8_t TOSU_REG;
 } hw_stack_t;
+
 
 typedef struct sw_stack {
     hw_stack_t stack[31];
@@ -149,10 +152,10 @@ typedef struct sw_stack {
 typedef struct tcb {
     uint8_t task_id;
     state_t task_state;
-
     f_ptr task_ptr;
     uint8_t task_delay;
     uint8_t task_priority;
+
 
     uint8_t W_REG;
     uint8_t STATUS_REG;
@@ -184,7 +187,6 @@ typedef struct ready_queue {
     uint8_t pos_task_running;
 } ready_queue_t;
 # 5 "./user.h" 2
-
 
 void config_user(void);
 
@@ -9974,8 +9976,6 @@ void mutex_unlock(mutex_t *m);
 
 
 
-
-
 typedef struct pipe {
     char *fila_dados;
     uint8_t capacity;
@@ -9998,29 +9998,31 @@ void pipe_write(pipe_t *p, char dado);
 
 
 
-void pwm_init(uint8_t channel);
-void pwm_set_duty(uint8_t channel, uint16_t duty);
+void pwm_init(void);
+void pwm_set_duty(uint16_t duty);
 
 
 void adc_init(void);
-uint16_t adc_read(uint8_t channel);
+uint16_t adc_read(void);
 
 
-void ext_int_init(uint8_t int_pin, uint8_t edge);
+void ext_int_init(void);
 # 7 "user.c" 2
 
 
 static volatile uint8_t temp_global = 0;
-
-
 static mutex_t m_temp;
-
-
 static sem_t s_new_data;
 
 
 static pipe_t p_temp;
-# 28 "user.c"
+
+
+
+
+
+
+
 void config_user(void)
 {
 
@@ -10032,29 +10034,24 @@ void config_user(void)
     ANSELEbits.ANSE2 = 0;
 
 
-    TRISDbits.RD0 = 0;
-    ANSELDbits.ANSD0 = 0;
     TRISDbits.RD2 = 0;
     ANSELDbits.ANSD2 = 0;
 
-
     LATE = 0x00;
-    LATDbits.LATD0 = 0;
     LATDbits.LATD2 = 0;
 
 
 
     __asm("global _task_sensor, _task_display, _task_pwm, _one_shot_task");
 
-
     mutex_init(&m_temp);
     sem_init(&s_new_data, 0);
     pipe_init(&p_temp);
 
 
-    pwm_init(1);
+    pwm_init();
     adc_init();
-    ext_int_init(0, 0);
+    ext_int_init();
 }
 
 
@@ -10065,17 +10062,14 @@ void config_user(void)
 
 TASK task_sensor(void)
 {
+    os_delay(15);
     while (1) {
-        uint16_t raw = adc_read(0);
-        uint8_t temp = (uint8_t)((raw * 125U) >> 8);
+        uint16_t raw = adc_read();
+        uint8_t temp = (uint8_t)(((uint32_t)raw * 500UL) / 1024UL);
         pipe_write(&p_temp, (char)temp);
         os_delay(10);
     }
 }
-
-
-
-
 
 
 
@@ -10095,14 +10089,12 @@ TASK task_display(void)
         LATEbits.LATE1 = (t >= 25 && t < 45) ? 1 : 0;
         LATEbits.LATE2 = (t >= 45) ? 1 : 0;
 
-
-        if (t > 60) LATDbits.LATD0 = ~LATDbits.LATD0;
-        else LATDbits.LATD0 = 0;
-
         sem_post(&s_new_data);
     }
 }
-# 117 "user.c"
+
+
+
 TASK task_pwm(void)
 {
     while (1) {
@@ -10114,7 +10106,7 @@ TASK task_pwm(void)
 
         uint16_t duty = (uint16_t)t * 13U;
         if (duty > 1024U) duty = 1024U;
-        pwm_set_duty(1, duty);
+        pwm_set_duty(duty);
     }
 }
 
@@ -10124,7 +10116,7 @@ TASK task_pwm(void)
 
 TASK one_shot_task(void)
 {
-    os_delay(2);
+
     LATDbits.LATD2 = ~LATDbits.LATD2;
     os_task_exit();
 }

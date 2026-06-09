@@ -4,20 +4,20 @@ Version 4.0 HI-TECH Software Intermediate Code
 [c E41 0 1 2 3 4 .. ]
 [n E41 . READY WAITING RUNNING WAITING_SEM WAITING_MUTEX  ]
 [v F63 `(v ~T0 @X0 0 tf ]
-"18 ./types.h
-[; ;./types.h: 18: typedef struct hw_stack {
+"20 ./types.h
+[; ;./types.h: 20: typedef struct hw_stack {
 [s S1 `uc 1 `uc 1 `uc 1 ]
 [n S1 hw_stack TOSL_REG TOSH_REG TOSU_REG ]
-"24
-[; ;./types.h: 24: typedef struct sw_stack {
+"27
+[; ;./types.h: 27: typedef struct sw_stack {
 [s S2 `S1 -> 31 `i `uc 1 ]
 [n S2 sw_stack stack stack_size ]
-"29
-[; ;./types.h: 29: typedef struct tcb {
+"32
+[; ;./types.h: 32: typedef struct tcb {
 [s S3 `uc 1 `E41 1 `*F63 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `S2 1 ]
 [n S3 tcb task_id task_state task_ptr task_delay task_priority W_REG STATUS_REG BSR_REG PRODL_REG PRODH_REG FSR0L_REG FSR0H_REG FSR1L_REG FSR1H_REG FSR2L_REG FSR2H_REG TABLAT_REG TBLPTRL_REG TBLPTRH_REG TBLPTRU_REG PCLATH_REG PCLATU_REG task_stack ]
-"60
-[; ;./types.h: 60: typedef struct ready_queue {
+"63
+[; ;./types.h: 63: typedef struct ready_queue {
 [s S4 `S3 -> 5 `i `uc 1 `*S3 1 `uc 1 ]
 [n S4 ready_queue TASKS size task_running pos_task_running ]
 "7 scheduler.c

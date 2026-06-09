@@ -9843,20 +9843,23 @@ void __attribute__((picinterrupt(("")))) ISR(void);
 
 typedef void TASK;
 
-typedef enum {READY = 0,
-              WAITING,
-              RUNNING,
-              WAITING_SEM,
-              WAITING_MUTEX
-             } state_t;
+typedef enum {
+    READY = 0,
+    WAITING,
+    RUNNING,
+    WAITING_SEM,
+    WAITING_MUTEX
+} state_t;
 
 typedef void (*f_ptr)(void);
+
 
 typedef struct hw_stack {
     uint8_t TOSL_REG;
     uint8_t TOSH_REG;
     uint8_t TOSU_REG;
 } hw_stack_t;
+
 
 typedef struct sw_stack {
     hw_stack_t stack[31];
@@ -9866,10 +9869,10 @@ typedef struct sw_stack {
 typedef struct tcb {
     uint8_t task_id;
     state_t task_state;
-
     f_ptr task_ptr;
     uint8_t task_delay;
     uint8_t task_priority;
+
 
     uint8_t W_REG;
     uint8_t STATUS_REG;
@@ -9939,7 +9942,6 @@ uint8_t rr_prior_scheduler(void);
 
 
 
-
 void config_user(void);
 
 TASK task_sensor(void);
@@ -9960,7 +9962,7 @@ void setup_hardware(void)
     T0CONbits.T08BIT = 1;
     T0CONbits.T0CS = 0;
     T0CONbits.PSA = 0;
-    T0CONbits.T0PS = 0b111;
+    T0CONbits.T0PS = 0b101;
     T0CONbits.TMR0ON = 1;
     TMR0 = 0;
 }

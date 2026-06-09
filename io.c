@@ -27,7 +27,7 @@ void pwm_set_duty(uint16_t duty)
 
 void adc_init(void)
 {
-    TRISAbits.RA0    = 1;      // RA0 como entrada digital
+    TRISAbits.RA0    = 1;      // RA0 como entrada
     ANSELAbits.ANSA0 = 1;      // habilita funcao analogica em AN0 (obrigatorio)
 
     ADCON1bits.PVCFG = 0b00;   // Vref+ = VDD

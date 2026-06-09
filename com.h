@@ -1,8 +1,6 @@
 #ifndef COM_H
 #define	COM_H
 
-#include "types.h"
-#include "os_config.h"
 #include "sync.h"
 
 
